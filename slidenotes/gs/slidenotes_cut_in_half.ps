@@ -1,0 +1,63 @@
+%!PS
+
+(slidenotes_include.ps) run
+
+% impostarlo con sFile=... sulla riga di comando
+/File where not {
+	(\n   *** Missing source file) =
+	quit
+}{ pop } ifelse
+
+/genboxes_save_box_to_pagedict { % <pagedict> <v1> <v2> <v3> <v4> <key> genboxes_save_box_to_pagedict <pagedict>
+	5 index 6 1 roll % stack: pagedict pagedict v1 v2 v3 v4 key
+	5 1 roll % stack: pagedict pagedict key v1 v2 v3 v4
+	4 array astore % stack: pagedict pagedict key array
+	put % stack: pagedict
+} bind executeonly def
+
+/genboxes_get_box_from_pagedict { % <pagedict> <box_name> genboxes_get_box_from_pagedict <pagedict> <v1> <v2> <v3> <v4>
+	1 index exch % stack: pagedict pagedict box_name
+	get oforce_elems % stack: pagedict v1 v2 v3 v4
+} bind executeonly def
+
+/genboxes { % <pagedict> genbox <pagedict>
+	dup get_crop_box % stack: pagedict llx lly urx ury
+	/OriginalCropBox genboxes_save_box_to_pagedict % stack: pagedict
+
+	/OriginalCropBox genboxes_get_box_from_pagedict % stack: pagedict llx lly urx ury
+	4 -1 roll 35 add 4 1 roll % llx = llx + 35
+	3 -1 roll 35 add 3 1 roll % lly = lly + 35
+	exch 35 sub exch % urx = urx - 35
+	2 div 35 sub % ury = (ury/2)-35
+	/MiddleDownBox genboxes_save_box_to_pagedict % stack: pagedict
+
+	/OriginalCropBox genboxes_get_box_from_pagedict % stack: pagedict llx lly urx ury
+	4 -1 roll 35 add 4 1 roll % llx = llx + 35
+	3 -1 roll 35 add 1 index 2 div add 3 1 roll % lly = lly + 35 + (ury/2)
+	exch 35 sub exch % urx = urx - 35
+	35 sub % ury = ury - 35
+	/MiddleUpBox genboxes_save_box_to_pagedict % stack: pagedict
+} bind executeonly def
+
+/replace_cropbox { % <pagedict> <box_name> replace_cropbox <pagedict>
+	1 index exch get % stack: <pagedict> <box_values_array>
+	1 index exch /CropBox exch put % stack: <pagedict>
+} bind executeonly def
+
+File dup (r) file runpdfbegin pop
+process_trailer_attrs
+
+1 1 pdfpagecount {
+	dup
+	pdfgetpage
+	genboxes
+	/MiddleUpBox replace_cropbox
+	dup /Page exch store
+	dup pdfshowpage
+
+	/MiddleDownBox replace_cropbox
+	dup /Page exch store
+	pdfshowpage
+
+	pdfpagecount div 100 mul cvi == flush
+} for

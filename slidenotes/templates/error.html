@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% set page_class_id = "error" %}
+{% set title = "Slidenotes.app" %}
+
+{% block content %}
+	<header id="welcome" class="welcome d-flex">
+	<div class="inner-wrapper mt-md-4 container">
+		<div class="row">
+			<div class="col-lg-6 col-md-8 col-sm-12 ml-auto mr-auto">
+				<h1 class="text-dark text-center section-title mb-4">Errore {{ error_code }}</h1>
+				<h3 class="text-dark text-justify pt-2 mb-3">
+					{{ error_description }}
+				</h3>
+				<div class="d-flex justify-content-center mt-4">
+					<a href="{{ url_for('index') }}" class="btn btn-primary btn-lg">Vai alla pagina principale</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	</header>
+{% endblock %}

@@ -1,0 +1,271 @@
+{% extends "base.html" %}
+
+{% set page_class_id = "index" %}
+{% set title = "Slidenotes.app" %}
+{% set description = "Impagina le diapositive secondo una disposizione efficace e prendi appunti in maniera più efficiente." %}
+
+{% block head_tags %}
+	<meta property="og:title" content="{{ title }}">
+	<meta property="og:description" content="{{ description }}">
+	<meta property="og:image" content="https://slidenotes.app/images/banner.jpg">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://slidenotes.app/">
+{% endblock %}
+
+{% block scripts %}
+	{% autoescape false %}
+	<script>
+		{{ include_file("js/jquery-3.3.1.min.js") }}
+		{{ include_file("js/jquery.easing.min.js") }}
+		{{ include_file("js/jquery.validate.min.js") }}
+		{{ include_file("js/nouislider.min.js") }}
+		{{ include_file("js/bootstrap.min.js") }}
+		{{ include_file("js/crypto.core.min.js") }}
+		{{ include_file("js/crypto.sha256.min.js") }}
+		{{ include_file("js/js.cookie.min.js") }}
+		{{ include_file("js/slidenotes.js") }}
+	</script>
+	{% endautoescape %}
+{% endblock %}
+
+{% block content %}
+	<div class="justify-content-center" style="display:none" aria-hidden="true"><h1 class="mt-auto mb-auto display-1">Rilascia il file</h1></div>
+
+	<header id="welcome" class="welcome d-flex">
+		<div class="inner-wrapper mt-md-4 container">
+			<div class="row">
+				<div class="col-lg-6 col-md-8 col-sm-12 ml-auto mr-auto">
+					<h1 class="welcome-heading display-4 text-dark text-center">Slidenotes.app</h1>
+						<p class="mb-4 text-justify">Impagina le diapositive secondo una disposizione efficace e prendi appunti in maniera più efficiente. <a href="#more">Maggiori informazioni</a></p>
+						<form
+								method="POST" enctype="multipart/form-data"
+								action="{{ url_for('backend.task_upload') }}"
+								data-file-cache-url="{{ url_for('backend.task_has_cached_file', file_id='') }}"
+								data-file-status-url="{{ url_for('backend.task_status', task_id='') }}"
+								data-file-download-url="{{ url_for('backend.task_download', task_id='') }}"
+								class="form-file">
+							<div class="row">
+								<div class="col">
+									<div class="custom-file mb-3">
+										<input type="file" accept=".pdf" id="file1" name="file" class="custom-file-input input-file" required>
+										<input type="hidden" name="sha256">
+										<label class="custom-file-label" for="file1">Scegli un file PDF</label>
+										<div class="invalid-feedback">Seleziona un file</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col md-8 col-sm-12">
+									<div class="progress-wrapper pb-3" style="display:none">
+										<span class="progress-label"
+											data-text-uploading="Caricamento del PDF al server in corso" data-color-uploading="bg-success"
+											data-text-pending="In coda, il tuo PDF sta per essere elaborato" data-color-pending="bg-warning"
+											data-text-processing="Elaborazione del PDF in corso" data-color-processing="bg-primary"
+											data-text-no-connection="Attendere" data-color-no-connection="bg-dark"></span>
+										<div class="progress">
+											<div class="progress-bar progress-bar-animated" role="progressbar" style="width: 0%;">
+												<span class="progress-value"></span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-8 col-sm-12">
+									<p class="mb-3"><a href="#form" class="js-scroll-trigger">Mostra altre opzioni</a></p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-8 col-sm-12">
+									<div class="custom-control custom-checkbox mb-3">
+										<input type="checkbox" name="privacy" id="privacy1" class="custom-control-input privacy-checkbox" required>
+										<label class="custom-control-label" for="privacy1">Confermo di aver letto l'<a href="{{ url_for('privacy') }}" target="_blank">informativa sul trattamento dei dati personali</a></label>
+										<div class="invalid-feedback">Seleziona questa casella se intendi procedere</div>
+									</div>
+								</div>
+								<div class="col-md-4 col-sm-12 d-flex align-items-end mb-3">
+									<input type="submit" class="btn btn-primary ml-auto" value="Invia">
+								</div>
+							</div>
+						</form>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<section id="more" class="section-invert py-4">
+		<div class="container">
+		<h3 class="section-title text-center mb-5 mt-2 pb-3">Stampa le slide per la lezione</h3>
+			<div class="row">
+				<div class="col-lg-5 col-md-12 text-justify mb-3">
+					<p class="my-2">Il <strong>problema</strong> di prendere appunti a lezione da professori che usano le slide
+					è che non c'è abbastanza tempo per <strong>copiare</strong> quello che viene proiettato e nel frattempo <strong>annotare</strong>
+					i ragionamenti ed i passaggi esposti durante la lezione stessa.</p>
+					<p class="my-2">Prendere appunti su un <strong>quaderno</strong> separato è una soluzione praticabile quando le diapositive sono più
+					illustrative che informative, ma, quando la quantità di contenuti si fa sostanziosa, mantenere il filo del discorso attraverso l'intreccio
+					di riferimenti e rimandi tra le slide e gli appunti risulta difficoltoso.</p>
+					<p class="my-2">In certe situazioni quindi <strong>stampare</strong> le slide prima della lezione è la soluzione più comoda per continuare a prendere appunti su carta,
+					ma le modalità con cui farlo offerte da PowerPoint o da Adobe Reader sono spesso sconvenienti: le slide vengono poste
+					al centro del foglio, relegando <strong>poco spazio</strong> per gli appunti, e non ci sono vie intermedie tra occupare quasi interamente le due metà del foglio nel caso di due slide per pagina
+					o avere scritte minuscole e poco spazio a margine nel caso di quattro slide per pagina.</p>
+					<p class="my-2">Con questo strumento invece è possibile posizionare da una a tre diapositive per pagina sul <strong>lato sinistro</strong> del foglio e scegliere quanto spazio lasciare
+					per gli <strong>appunti</strong>. Inoltre, essendo <strong>online</strong>, può essere utilizzato anche con quei computer su cui non è possibile installare programmi, come ad esempio quelli del centro stampa.</p>
+				</div>
+				<div id="form" class="col-lg-7 col-md-12 text-justify py-2">
+					<div class="row justify-content-md-center px-4">
+						<div class="p-4 mb-3 card">
+							<form
+								method="POST" enctype="multipart/form-data"
+								action="{{ url_for('backend.task_upload') }}"
+								data-file-cache-url="{{ url_for('backend.task_has_cached_file', file_id='') }}"
+								data-file-status-url="{{ url_for('backend.task_status', task_id='') }}"
+								data-file-download-url="{{ url_for('backend.task_download', task_id='') }}"
+								class="form-file">
+								<div class="row mb-2">
+									<div class="col">
+										<h5>File con le slide da stampare</h5>
+										<div class="custom-file mb-3">
+											<input type="file" accept=".pdf" id="file2" name="file" class="custom-file-input input-file" required>
+											<input type="hidden" name="sha256">
+											<label class="custom-file-label" for="file2">Scegli un file PDF</label>
+											<div class="invalid-feedback">Seleziona un file</div>
+										</div>
+
+									</div>
+								</div>
+								<div class="row mb-3">
+									<div class="col">
+										<h5>Contenuto del file originale</h5>
+										<div class="row">
+											<div class="col-6 col-sm-8">
+												<div class="custom-control custom-radio mb-1">
+													<input type="radio" id="layout1" name="layout" value="1" class="custom-control-input" checked>
+													<label class="custom-control-label" for="layout1">Una slide per pagina</label>
+												</div>
+												<div class="custom-control custom-radio mb-1">
+													<input type="radio" id="layout2" name="layout" value="2" class="custom-control-input">
+													<label class="custom-control-label" for="layout2">Due slide per pagina</label>
+												</div>
+											</div>
+											<div class="col-6 col-sm-4">
+												<div id="input-page-preview" class="page page-43-small">
+													<div class="slide-container">
+														<div class="slide slide-single-in-43-small"></div>
+														<div class="slide slide-bottom-in-a4-small" style="display:none"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row mb-3">
+									<div class="col">
+										<h5>Impostazione pagina</h5>
+										<div class="row">
+											<div class="col-md-6 col-sm-12">
+												<div class="form-group">
+												<label>Numero di slide per pagina</label>
+													<div class="row">
+														<div class="col-4">
+															<div class="custom-control custom-radio">
+																<input type="radio" id="npage1" name="npage" value="1" class="custom-control-input">
+																<label class="custom-control-label" for="npage1">Una</label>
+															</div>
+														</div>
+														<div class="col-4">
+															<div class="custom-control custom-radio">
+																<input type="radio" id="npage2" name="npage" value="2" class="custom-control-input">
+																<label class="custom-control-label" for="npage2">Due</label>
+															</div>
+														</div>
+														<div class="col-4">
+															<div class="custom-control custom-radio">
+																<input type="radio" id="npage3" name="npage" value="3" class="custom-control-input" checked>
+																<label class="custom-control-label" for="npage3">Tre</label>
+															</div>
+														</div>
+													</div>
+												</div>
+												<div class="form-group">
+													<div class="custom-control custom-checkbox mb-3">
+														<input type="checkbox" id="trim" name="trim" class="custom-control-input" checked>
+														<label class="custom-control-label" for="trim">Elimina gli spazi bianchi attorno alle slide</label>
+													</div>
+												</div>
+												<div class="form-group no-js-hidden">
+													<label>Percentuale di spazio libero</label>
+													<div class="p-2">
+													<div id="percentage-slider" class="mt-0">
+														<input type="hidden" name="percentage" id="percentage" value="50" class="custom-slider-input">
+													</div>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-6 col-sm-12">
+												<div id="output-page-preview" class="page page-a4">
+													<div class="slide-container">
+														<div class="slide slide-def-size first-third"></div>
+														<div class="slide slide-def-size second-third"></div>
+														<div class="slide slide-def-size third-third"></div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="custom-control custom-checkbox mb-3">
+									<input type="checkbox" name="privacy" id="privacy2" class="custom-control-input privacy-checkbox" required>
+									<label class="custom-control-label" for="privacy2">Confermo di aver letto l'<a href="{{ url_for('privacy') }}" target="_blank">informativa sul trattamento dei dati personali</a></label>
+									<div class="invalid-feedback">Seleziona questa casella se intendi procedere</div>
+								</div>
+								<div class="progress-wrapper pb-3" style="display:none">
+									<span class="progress-label"
+										data-text-uploading="Caricamento del PDF al server in corso" data-color-uploading="bg-success"
+										data-text-pending="In coda, il tuo PDF sta per essere elaborato" data-color-pending="bg-warning"
+										data-text-processing="Elaborazione del PDF in corso" data-color-processing="bg-primary"
+										data-text-no-connection="Attendere" data-color-no-connection="bg-dark"></span>
+									<div class="progress">
+										<div class="progress-bar progress-bar-animated" role="progressbar" style="width: 0%;">
+											<span class="progress-value"></span>
+										</div>
+									</div>
+								</div>
+								<input type="submit" class="btn btn-primary btn-pill d-flex ml-auto mr-auto" value="Invia">
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title"
+						data-network-error="Problema di connessione"
+						data-server-error="Servizio non disponibile"
+						data-job-error="Elaborazione fallita"
+						data-job-completed="Elaborazione terminata"></h5>
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span aria-hidden="true">&times;</span>
+					</button>
+				</div>
+				<div class="modal-body"
+					data-network-error="Si è verificato un problema di connessione: assicurati di essere collegato ad internet e prova ad inviare di nuovo il PDF."
+					data-server-error="Non è stato possibile elaborare la tua richiesta: il servizio potrebbe essere momentaneamente non disponibile, riprova più tardi."
+					data-job-error="Si è verificato un errore durante l'elaborazione del PDF. Assicurati di aver inviato un file PDF valido e nel caso riprova più tardi."
+					data-job-completed="L'elaborazione del PDF è stata completata con successo. Se il download non è iniziato automaticamente, clicca su Scarica.">
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Chiudi</button>
+					<form method="GET" action="#">
+						<input type="submit" class="btn btn-primary" value="Scarica">
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}

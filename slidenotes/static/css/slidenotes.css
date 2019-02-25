@@ -1,0 +1,313 @@
+/*********
+ * FONTS *
+ *********/
+
+/* poppins-300 - latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 300;
+  font-display: fallback;
+  src: url('/fonts/poppins-v5-latin-300.eot'); /* IE9 Compat Modes */
+  src: local('Poppins Light'), local('Poppins-Light'),
+       url('/fonts/poppins-v5-latin-300.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/fonts/poppins-v5-latin-300.woff2') format('woff2'), /* Super Modern Browsers */
+       url('/fonts/poppins-v5-latin-300.woff') format('woff'), /* Modern Browsers */
+       url('/fonts/poppins-v5-latin-300.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('/fonts/poppins-v5-latin-300.svg#Poppins') format('svg'); /* Legacy iOS */
+}
+/* poppins-regular - latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 400;
+  font-display: fallback;
+  src: url('/fonts/poppins-v5-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local('Poppins Regular'), local('Poppins-Regular'),
+       url('/fonts/poppins-v5-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/fonts/poppins-v5-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('/fonts/poppins-v5-latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('/fonts/poppins-v5-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('/fonts/poppins-v5-latin-regular.svg#Poppins') format('svg'); /* Legacy iOS */
+}
+/* poppins-500 - latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 500;
+  font-display: fallback;
+  src: url('/fonts/poppins-v5-latin-500.eot'); /* IE9 Compat Modes */
+  src: local('Poppins Medium'), local('Poppins-Medium'),
+       url('/fonts/poppins-v5-latin-500.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/fonts/poppins-v5-latin-500.woff2') format('woff2'), /* Super Modern Browsers */
+       url('/fonts/poppins-v5-latin-500.woff') format('woff'), /* Modern Browsers */
+       url('/fonts/poppins-v5-latin-500.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('/fonts/poppins-v5-latin-500.svg#Poppins') format('svg'); /* Legacy iOS */
+}
+/* poppins-600 - latin */
+@font-face {
+  font-family: 'Poppins';
+  font-style: normal;
+  font-weight: 600;
+  font-display: fallback;
+  src: url('/fonts/poppins-v5-latin-600.eot'); /* IE9 Compat Modes */
+  src: local('Poppins SemiBold'), local('Poppins-SemiBold'),
+       url('/fonts/poppins-v5-latin-600.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/fonts/poppins-v5-latin-600.woff2') format('woff2'), /* Super Modern Browsers */
+       url('/fonts/poppins-v5-latin-600.woff') format('woff'), /* Modern Browsers */
+       url('/fonts/poppins-v5-latin-600.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('/fonts/poppins-v5-latin-600.svg#Poppins') format('svg'); /* Legacy iOS */
+}
+
+/* roboto-mono-regular - latin */
+@font-face {
+	font-family: 'Roboto Mono';
+	font-style: normal;
+	font-weight: 400;
+	font-display: fallback;
+	src: url('/fonts/roboto-mono-v5-latin-regular.eot'); /* IE9 Compat Modes */
+	src: local('Roboto Mono'), local('RobotoMono-Regular'),
+		url('/fonts/roboto-mono-v5-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+		url('/fonts/roboto-mono-v5-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+		url('/fonts/roboto-mono-v5-latin-regular.woff') format('woff'), /* Modern Browsers */
+		url('/fonts/roboto-mono-v5-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+		url('/fonts/roboto-mono-v5-latin-regular.svg#RobotoMono') format('svg'); /* Legacy iOS */
+}
+
+/*******************
+ * WELCOME SECTION *
+ *******************/
+
+.slidenotes {
+	font-weight: 400;
+}
+
+.slidenotes .welcome {
+	position: relative;
+	height: 100vh;
+	min-height: 700px;
+	background: url("/images/bg.jpg") no-repeat bottom left fixed;
+	background-size: cover;
+}
+
+.slidenotes .welcome .inner-wrapper {
+	padding-top: 3rem;
+}
+
+/* Edge */
+@supports (-ms-ime-align:auto) {
+	.slidenotes .welcome {
+		background-attachment: scroll !important;
+	}
+}
+
+/* Internet Explorer */
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+	.slidenotes .welcome {
+		background-attachment: scroll !important;
+	}
+}
+
+.slidenotes .welcome:before {
+	position: absolute;
+	z-index: 0;
+	content: '';
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	opacity: 0.80;
+	background: #ffffff;
+}
+
+@media (max-height: 700px) {
+	.slidenotes .welcome {
+		background-attachment: scroll;
+	}
+}
+
+@media (max-width: 991.98px) {
+	.slidenotes .welcome {
+		height: auto;
+	}
+	.slidenotes .welcome .header-social-icons {
+		display: none;
+	}
+}
+
+@media (max-width: 767.98px) {
+	.slidenotes .welcome {
+		height: auto;
+	}
+	.slidenotes .welcome .inner-wrapper {
+		padding-top: 4.5rem;
+	}
+}
+
+@media (max-width: 400px) {
+	.slidenotes .welcome .welcome-heading {
+		font-size: 2.415rem;
+	}
+}
+
+.slidenotes .welcome .iphone-mockup {
+	max-width: 85%;
+}
+
+.slidenotes .section-title {
+	position: relative;
+}
+
+.slidenotes .section-title:after {
+	content: '';
+	width: 30px;
+	height: 2px;
+	background: #17c671;
+	position: absolute;
+	left: 50%;
+	margin-left: -15px;
+	bottom: -20px;
+}
+
+.slidenotes .section-title.underline--left:after {
+	left: 0;
+	margin-left: 0;
+}
+
+.slidenotes .section {
+	border-bottom: 1px solid #eaebed;
+}
+
+.slidenotes .section-invert {
+	background: #f9fafc;
+}
+
+/****************
+ * PAGE PREVIEW *
+ ****************/
+
+.slidenotes .page {
+	display: block;
+	margin: 0 auto;
+	border: 1px solid #eee;
+	box-shadow: 3px 2px 2px rgba(0,0,0,0.15);
+	transition: height 0.3s ease;
+}
+.slidenotes .page-a4 {
+	width: 200px;
+	height: 282px;
+}
+.slidenotes .page-a4-small {
+	width: 100px;
+	height: 141px;
+}
+.slidenotes .page-43-small {
+	width: 100px;
+	height: 75px;
+}
+.slidenotes .slide-container {
+	position: absolute;
+}
+.slidenotes .slide {
+	display: block;
+	border: 1px solid #ccc;
+	background-color: #eee;
+	position: absolute;
+	transition: top 0.3s ease, left 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+.slidenotes .slide-def-size {
+	width: 92px;
+	height: 69px;
+	left: 15px;
+}
+.slidenotes .slide-single-in-43-small {
+	width: 84px;
+	height: 64px;
+	left: 7px;
+	top: 4px;
+}
+.slidenotes .slide-top-in-a4-small {
+	width: 64px;
+	height: 48px;
+	left: 17px;
+	top: 15px;
+}
+.slidenotes .slide-bottom-in-a4-small {
+	width: 64px;
+	height: 48px;
+	left: 17px;
+	top: 79px;
+}
+.slidenotes .slide.first-third {
+	top: 15px;
+}
+.slidenotes .slide.second-third {
+	top: 104px;
+}
+.slidenotes .slide.third-third {
+	top: 192px;
+}
+.slidenotes .slide.second-half {
+	top: 141px;
+}
+
+/************
+ * DRAGOVER *
+ ************/
+
+.slidenotes .dragover {
+	position: fixed;
+	height: 100%;
+	width: 100%;
+	border: dashed 8px #f00;
+	background-color: #ffffffaa;
+	z-index: 99999;
+}
+
+/****************
+ * UI BUG-FIXES *
+ ****************/
+
+.slidenotes .custom-radio .custom-control-label::before {
+  width: 18px;
+  height: 18px;
+  top: 3px;
+}
+.slidenotes .custom-checkbox .custom-control-label::before {
+  width: 18px;
+  height: 18px;
+  top: 3px;
+}
+
+html:not([dir="rtl"]) .slidenotes .noUi-horizontal .noUi-handle, .slidenotes .noUi-horizontal .noUi-handle {
+	right: -11px;
+}
+
+.slidenotes .custom-file-label {
+	word-wrap: normal;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 102px;
+}
+
+.custom-file-input:lang(it)~.custom-file-label::after {
+    content: "Scegli file";
+}
+
+.slidenotes .custom-file-label::after {
+	height: auto;
+}
+
+/******************
+ * NO-JS HANDLING *
+ ******************/
+
+.no-js .custom-file-input {
+	opacity: 1;
+	padding-top: 0.4em;
+}
+
+.no-js .no-js-hidden, .no-js .custom-file-label, .no-js .page {
+	display: none;
+}

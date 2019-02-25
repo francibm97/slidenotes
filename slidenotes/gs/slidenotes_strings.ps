@@ -1,0 +1,68 @@
+%!PS
+
+/string_starts_with { % <string> <substring> string_starts_with <true|false>
+	1 index length 1 index length ge {
+		exch 0 2 index length getinterval exch search {
+			pop pop pop true
+		} { pop false } ifelse
+	} {
+		pop pop false
+	}ifelse
+} bind executeonly def
+
+/string_get_encoding { % <string> string_get_encoding <encoding>
+	dup <0000FEFF> string_starts_with {
+		pop 1 % UTF-32 Big Endian
+	}
+	{ 
+		dup <FFFE0000> string_starts_with {
+			pop 2 % UTF-32 Little Endian
+		}
+		{
+			dup <FEFF> string_starts_with {
+				pop 3 % UTF-16 Big Endian
+			}
+			{
+				dup <FFFE> string_starts_with {
+					pop 4 % UTF-16 Little Endian
+				}
+				{
+					dup <EFBBBF> string_starts_with {
+						pop 5 % UTF-8
+					}
+					{
+						pop 0 % ASCII
+					} ifelse
+				} ifelse
+			} ifelse
+		} ifelse
+	} ifelse
+} bind executeonly def
+
+/string_remove_start { % <string> <int> string_remove_start <string>
+	1 index length exch dup 3 1 roll sub getinterval
+} bind executeonly def
+
+/concatstrings { % <string> <string> concatstrings <string>
+	exch dup length    
+	2 index length add string    
+	dup dup 4 2 roll copy length
+	4 -1 roll putinterval
+} bind executeonly def  
+
+/slidenotes_string { % <string> append_string <string>
+	/strings [
+		<536C6964656E6F7465732E617070202D20>
+		<0000FEFF000000530000006C0000006900000064000000650000006E0000006F0000007400000065000000730000002E000000610000007000000070000000200000002D00000020>
+		<FFFE0000530000006C0000006900000064000000650000006E0000006F0000007400000065000000730000002E000000610000007000000070000000200000002D00000020000000>
+		<FEFF0053006C006900640065006E006F007400650073002E0061007000700020002D0020>
+		<FFFE53006C006900640065006E006F007400650073002E0061007000700020002D002000>
+		<EFBBBF536C6964656E6F7465732E617070202D20>
+	] def
+	/remove_start [0 4 4 2 2 3] def
+	dup string_get_encoding
+	exch remove_start 2 index get string_remove_start
+	exch strings exch get exch
+	concatstrings
+	
+} bind executeonly def

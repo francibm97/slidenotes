@@ -1,0 +1,56 @@
+<!doctype html>
+<html class="no-js" lang="it">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="x-ua-compatible" content="ie=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script>document.documentElement.className = "js";</script>
+
+	<link rel="icon" type="image/png" sizes="512x512" href="{{ url_for('static', filename='favicon/favicon-512x512.png') }}">
+	<link rel="icon" type="image/png" sizes="192x192" href="{{ url_for('static', filename='favicon/favicon-192x192.png') }}">
+	<link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon/favicon-32x32.png') }}">
+	<link rel="icon" type="image/png" sizes="96x96" href="{{ url_for('static', filename='favicon/favicon-96x96.png') }}">
+	<link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon/favicon-16x16.png') }}">
+	<link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='favicon/favicon-180x180.png') }}">
+
+	{% autoescape false %}
+	<style>{{ include_file("css/bootstrap.min.css") }}</style>
+	<style>{{ include_file("css/shards.nofonts.min.css") }}</style>
+	<style>{{ include_file("css/slidenotes.css") }}</style>
+	{% endautoescape %}
+
+	{% if title %}
+	<title>{{ title }}</title>
+	{% else %}
+	<title>Slidenotes.app</title>
+	{% endif %}
+
+	{% if description %}
+	<meta name="description" content="{{ description }}">
+	{% endif %}
+
+	{% block head_tags %}{% endblock %}
+
+</head>
+<body class="slidenotes {{ page_class_id }}">
+	{% block content %}{% endblock %}
+
+	<footer class="bg-dark pt-5 pb-3">
+		<div class="container">
+			<div class="row">
+				<div class="col-12 col-sm-8 text-left text-white">
+					<p class="mb-0"><a class="text-white" href="{{ url_for('privacy') }}">Informativa sul trattamento dei dati personali</a></p>
+					<p class="mb-0"><a class="text-white" href="https://github.com/francibm97/slidenotes">Codice sorgente su GitHub</a></p>
+					<p class="mb-0">Su internet con tanto ♥ da marzo 2019</p>
+				</div>
+				<div class="col-12 col-sm-4 mt-auto pt-2">
+					<a class="text-white pt-0 navbar-brand pb-0 float-sm-right" href="#welcome">Slidenotes.app</a>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	{% block scripts %}{% endblock %}
+
+</body>
+</html>

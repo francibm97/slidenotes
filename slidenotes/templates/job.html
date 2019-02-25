@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% set page_class_id = "error" %}
+{% set title = "Elaborazione" %}
+
+{% block content %}
+	{% if status != "SUCCESS" and status != "FAILURE" %}
+	<meta http-equiv="refresh" content="1;URL='{{ url_for('backend.task_status', task_id=task_id) }}'">
+	{% endif %}
+	<header id="welcome" class="welcome d-flex">
+		<div class="inner-wrapper mt-md-4 container">
+			<div class="row">
+				<div class="col-lg-6 col-md-8 col-sm-12 ml-auto mr-auto">
+					<h1 class="welcome-heading display-4 text-dark text-center">Slidenotes.app</h1>
+					<p class="mb-3 text-justify">Impagina le diapositive secondo una disposizione efficace e prendi appunti in maniera più efficiente.</p>
+					<div class="progress-wrapper">
+						{% if status == "PENDING" %}
+						<span class="progress-label">In coda, il tuo PDF sta per essere elaborato</span>
+						<div class="progress">
+							<div class="progress-bar progress-bar-animated bg-warning" role="progressbar" style="width: 100%;">
+								<span class="progress-value"></span>
+							</div>
+						</div>
+						{% elif status == "PROCESSING" %}
+						<span class="progress-label">Elaborazione del PDF in corso</span>
+						<div class="progress">
+							<div class="progress-bar progress-bar-animated bg-primary" role="progressbar" style="width: {{ progress }}%;">
+								<span class="progress-value">{{ progress }}%</span>
+							</div>
+						</div>
+						{% elif status == "FAILURE" %}
+						<p class="mb-3">Si è verificato un errore durante l'elaborazione del PDF. Assicurati di aver inviato un file PDF valido e nel caso riprova più tardi.</p>
+						{% elif status == "SUCCESS" %}
+						<p class="mb-3">Elaborazione del PDF completata</p>
+						{% endif %}
+					</div>
+					{% if status == "SUCCESS" %}
+					<div class="d-flex justify-content-center">
+						<form method="GET" action="{{ url_for('backend.task_download', task_id=task_id) }}">
+							<input type="submit" class="btn btn-primary" value="Scarica il PDF">
+						</form>
+					</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</header>
+{% endblock %}

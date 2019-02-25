@@ -1,0 +1,20 @@
+<svg width="48" height="48" xmlns="http://www.w3.org/2000/svg">
+
+ <g>
+  <title>background</title>
+  <rect fill="none" id="canvas_background" height="402" width="582" y="-1" x="-1"/>
+ </g>
+ <g>
+  <title>Layer 1</title>
+  <rect id="svg_31" height="31.883197" width="24.525537" y="7.920172" x="11.25548" fill-opacity="null" stroke-width="1.5" stroke="#ffffff" fill="#fff"/>
+  <circle fill="#0f1c70" id="svg_12" r="24" cy="24" cx="24" class="st1"/>
+  <polygon fill="#ffffff" id="svg_17" points="17.3,7.9 10.4,14.8 10.4,40.1 35.8,40.1 35.8,7.9      " class="st4"/>
+  <polygon transform="rotate(180 23.099998474121094,23.91240692138672) " fill="#ffffff" id="svg_33" points="17.299999237060547,7.812409371137619 10.399999618530273,14.712408989667892 10.399999618530273,40.01240727305412 35.79999923706055,40.01240727305412 35.79999923706055,7.812409371137619 " class="st4"/>
+  <path fill="#ff4676" id="svg_22" d="m37.3,20.8l-2.6,2.6l-3.9,-3.9l2.6,-2.6c0.4,-0.4 1,-0.4 1.4,0l2.5,2.5c0.4,0.4 0.4,1 0,1.4z" class="st0"/>
+  <rect id="svg_37" height="8" width="10" y="30" x="13" stroke-opacity="null" stroke-width="null" stroke="null" fill="#d3d3d3"/>
+  <polygon fill="#ffe92e" id="svg_24" points="22.7,35.4 18.8,31.5 17.3,36.9     " class="st2"/>
+  <rect id="svg_34" height="8" width="10" y="10" x="13" stroke-opacity="null" stroke-width="null" stroke="null" fill="#d3d3d3"/>
+  <rect id="svg_36" height="8" width="10" y="20" x="13" stroke-opacity="null" stroke-width="null" stroke="null" fill="#d3d3d3"/>
+  <rect fill="#17d5d1" id="svg_21" y="19" x="24" width="5.5" transform="matrix(0.7071,0.7071,-0.7071,0.7071,27.2345,-10.8859) " height="16.9" class="st3"/>
+ </g>
+</svg>

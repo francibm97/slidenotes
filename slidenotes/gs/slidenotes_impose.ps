@@ -1,0 +1,297 @@
+%!PS
+
+(slidenotes_include.ps) run
+(slidenotes_strings.ps) run
+
+% impostarlo con sFile=... sulla riga di comando
+/File where not {
+	(\n   *** Missing source file) =
+	quit
+}{ pop } ifelse
+
+% impostarlo con dNPage=... sulla riga di comando
+/NPage where not { /NPage 3 def }{ pop } ifelse
+
+% impostarlo con sBoxes=nomefile.ps e con dNBoxesPerPage=... sulla riga di comando
+% specifiche di nomefile.ps sotto
+/NBoxesPerPage where not { /NBoxesPerPage 1 def } if
+/Boxes where not {
+	/UsePDFCropBox true def
+}{	pop
+	% run del file postscript che specifica le box lungo cui tagliare la slide
+	% e che deve contenere la variabile Boxes, un array di array
+	% Esempio:
+	%
+	% /Boxes [
+	%  [0 0 100 100]
+	%  [2 2 100 100]
+	% ] def
+	%
+	% Il numero di elementi dell'array deve essere pari a 
+	% NBoxesPerPage * numero_di_pagine_del_pdf
+	Boxes run
+	/UsePDFCropBox false def
+} ifelse
+
+% impostarlo con dConQuadretti sulla riga di comando
+/ConQuadretti where not { /ConQuadretti false def }{ /ConQuadretti true def } ifelse
+
+% impostarlo con dDesiredFreeSpacePercentage sulla riga di comando
+/DesiredFreeSpacePercentage where not { /DesiredFreeSpacePercentage 0.5 def } if
+
+/LineBorderWidth 0.3 mm def
+/MarginLeft 16 mm def
+/MarginTop 6 mm def
+/MarginBottom 6 mm def
+
+% FINE PARAMETRI %
+
+% Se una pagina del pdf contiene un /Rotate ... diverso da 0, impediamo
+% di far ruotare complessivamente la pagina finale perchè non avrebbe senso:
+% impostando /AutoRotatePages /None, pdfwrite obbedisce alla regola /Orientation
+% Questo ha lo svantaggio che la slide apparirà ruotata sul foglio: se è il
+% caso, preprocessare il file con gs -dNOPAUSE -dBATCH -sOutputFile=out in
+% in modo che il file esca con /Rotate 0 e MediaBox, CropBox ecc sistemati
+<< /AutoRotatePages /None >> setdistillerparams
+
+% Impostiamo dimensione pagina (a4 verticale), orientazione (portrait)
+% PageUsesTransparency serve per abilitare la trasparenza su tutte le pagine:
+% questo può non essere tecnicamente corretto, perchè può darsi che il pdf non
+% voglia usare la trasparenza e che quindi non disegni tutto il foglio contando
+% sul fatto che le parti non disegnate resteranno bianche; forzando l'uso della
+% trasparenza quindi può darsi che parti bianche diventino trasparenti, ma non è
+% un grosso problema perchè tanto il foglio di suo è bianco. Se si stampa la
+% quadrettatura può darsi invece che compaia anche nelle slide.
+<< /PageSize [595 842] /Orientation 0 /PageUsesTransparency true >> setpagedevice
+
+currentpagedevice /PageSize get
+dup 0 get /PageWidth exch def
+1 get /PageHeight exch def
+
+
+% Fattore di scala dovuto alla presenza di margini
+/ScaleFactor PageHeight MarginTop sub MarginBottom sub PageHeight div def
+/DesiredSlideWidth PageWidth 1 DesiredFreeSpacePercentage sub mul MarginLeft sub ScaleFactor div def
+/TranslateYStep PageHeight NPage div def
+
+File dup (r) file runpdfbegin pop
+process_trailer_attrs
+
+/quadrettatura {
+	save
+	PageHeight 4 mm div cvi { % linee orizzontali
+		0 4 mm translate 
+		0 0 moveto PageWidth 0 rlineto 
+		1 15 div mm setlinewidth 0.67 setgray
+		stroke
+	} repeat
+	restore save 
+	PageWidth 4 mm div cvi { % linee verticali
+		4 mm 0 translate
+		0 0 moveto 0 PageHeight rlineto
+		1 15 div mm setlinewidth 0.67 setgray
+		stroke
+	} repeat
+	restore
+} bind executeonly def
+
+/logo {
+	{
+	save
+		MarginLeft 6 mm translate
+		0.4 0.4 scale
+		(slidenotes_logo.ps) run
+		
+		% Cover the logo when the pdf is displayed on screen
+		[	/Rect [0 0 250 32]
+			/Subtype /Square
+			/Border [0 0 16]
+			/Color [1 1 1]
+			% Flag ReadOnly, Locked, LockedContents
+			% see par 12.5.3 Annotations Flags from PDF 1.7 Reference
+			/F 1216
+		/ANN pdfmark
+		
+	restore
+	} pop
+} bind executeonly def
+
+% mettilo a zero così da far scattare il primo if in draw_slide
+% quando si disegna la prima slide in assoluto
+/TranslateY 0 def
+/NeedShowPage false def
+
+% contatore globale della slide da disegnare
+/Counter 0 def
+/PageCounter 1 def
+/draw_slide { % <pagedict> <box> draw_slide <pagedict>
+
+	TranslateY 1 lt {
+		% non creare una nuova pagina se è la prima slide in assoluto
+		NeedShowPage { showpage /PageCounter PageCounter 1 add def } if
+		
+		% verrà messo a true appena verrà disegnata una slide
+		/NeedShowPage false def
+		
+		/TranslateY PageHeight def
+		ConQuadretti { quadrettatura } if
+		
+		logo
+
+		MarginLeft MarginBottom translate
+		ScaleFactor ScaleFactor scale
+	} if
+
+	oforce_elems % stack: pagedict llx lly urx ury
+	/SlideURY exch def
+	/SlideURX exch def
+	/SlideLLY exch def
+	/SlideLLX exch def
+	% SlideWidth è la larghezza della slide ritagliata
+	/SlideWidth SlideURX SlideLLX sub def
+	% SlideHeight è l'altezza della slide ritagliata
+	/SlideHeight SlideURY SlideLLY sub def
+	/NeedShowPage true def
+	
+	dup % stack: pagedict pagedict
+	save exch % stack: pagedict save pagedict
+		% trasla nel settore di pagina corretto 
+		0 TranslateY translate
+				
+		/FinalSlideWidth DesiredSlideWidth def
+		/FinalSlideHeight SlideHeight FinalSlideWidth mul SlideWidth div def
+		
+		% Controlliamo se l'altezza della slide è oltre l'altezza
+		% del settore di pagina in cui deve stare
+		FinalSlideHeight TranslateYStep gt {
+			% La slide con la larghezza desiderata è troppo alta,
+			% facciamola larga al max per stare nel suo settore
+			/FinalSlideHeight TranslateYStep def
+			/FinalSlideWidth SlideWidth FinalSlideHeight mul SlideHeight div def
+		} if
+		
+		% Visto che la slide viene disegnata da dove siamo verso l'alto
+		% trasla in basso di quanto la slide sarà alta
+		0 FinalSlideHeight neg translate
+		
+		% Applica lo scalamento
+		FinalSlideHeight SlideHeight div FinalSlideHeight SlideHeight div scale
+				
+		% sposta la slide all'inizio della sua box
+		SlideLLX neg SlideLLY neg translate
+				
+		
+		% definiamo il rettangolo visibile sul foglio secondo i valori x y w h
+		% anche se la slide ha contenuto al di fuori di questo rettangolo noi
+		% lo tagliamo via
+		% le operazioni di translate e scale è come se non fossero mai state 
+		% eseguite, quindi bisogna indicare il rettangolo visibile che conterrà
+		% la slide ricordandosi di tutte le traslazioni per il punto
+		% di inizio del rettangolo (in basso a sinistra) e
+		% bisogna ricalcolare le dimensione w h del rettangolo
+		MarginLeft % x
+		MarginBottom TranslateY ScaleFactor mul add FinalSlideHeight ScaleFactor mul sub % y
+		FinalSlideWidth ScaleFactor mul % width 
+		FinalSlideHeight ScaleFactor mul % heigth
+		4 array astore % salva in vettore
+		exch % stack: pagedict save rettangolo_visibile pagedict
+				
+		dup /Page exch store
+		pdfshowpage_init
+		draw_page_content % stack: pagedict save
+				
+		% disegna il bordo
+		SlideLLX SlideLLY translate
+		/LineBorderWidth LineBorderWidth FinalSlideHeight SlideHeight div div ScaleFactor div def
+		0 LineBorderWidth 2 div sub 0 LineBorderWidth 2 div sub moveto
+		SlideWidth LineBorderWidth add 0 rlineto 
+		0 SlideHeight LineBorderWidth add rlineto 
+		SlideWidth LineBorderWidth add neg 0 rlineto 
+		closepath
+		LineBorderWidth setlinewidth 0.90 setgray
+		stroke
+	restore
+		
+	/TranslateY TranslateY TranslateYStep sub def
+	
+} bind executeonly def
+
+1 1 pdfpagecount {
+	
+	pdfgetpage
+	
+	1 1 NBoxesPerPage {
+		pop
+		
+		UsePDFCropBox {
+			dup get_crop_box 4 array astore
+		} {
+			Boxes Counter get
+		} ifelse
+		
+		% Controlliamo che la box non abbia altezza o ampiezza zero
+		dup oforce_elems % llx lly urx ury
+		3 -1 roll % llx urx ury lly
+		exch sub 0 eq { % altezza 0
+			pop pop pop
+		} {
+			exch sub 0 eq { % larghezza 0
+				pop
+			} {
+				% Larghezza e altezza != 0
+				draw_slide
+			} ifelse
+		} ifelse
+		
+		/Counter Counter 1 add def
+		
+		Counter pdfpagecount NBoxesPerPage mul div 100 mul cvi == flush
+		
+	} for
+	
+	pop
+	
+} for
+NeedShowPage { showpage } if
+
+Trailer /Info knownoget {
+	dup /Title knownoget {
+		/NewTitle exch slidenotes_string def
+	} {
+		/NewTitle (Slidenotes.app) def
+	}
+	ifelse
+} if
+
+[	/Title NewTitle
+	/Producer (Slidenotes.app)
+	/DOCINFO pdfmark
+
+[	/PageLayout /SinglePage
+	/PageMode /UseOutlines
+	/Page 1
+	/View [/Fit]
+	/DOCVIEW pdfmark
+
+%[	/_objdef {Javascripts} /type /dict /OBJ pdfmark
+%[	{Javascripts} << /JavaScript <<
+%		/Names [ 
+%			(Script1) <<
+%				/S /JavaScript
+%				/JS (app.launchURL("http://www.example.com/", true);)
+%			>> 
+%		]
+%>> >>
+%/PUT pdfmark
+
+[	{Catalog} <<
+		% Fa si che l'opzione di default sia di non riscalare la pagina quando
+		% viene aperta la finestra per la stampa
+		/ViewerPreferences << 
+			/PrintScaling /None 
+			/Duplex /DuplexFlipLongEdge 
+		>>
+		/Names {Javascripts}
+	>> 
+	/PUT pdfmark
+	
