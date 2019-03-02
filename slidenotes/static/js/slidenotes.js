@@ -102,6 +102,7 @@ jQuery("body").hasClass("index") &&
 		$(this).data("checked", this.checked);
 	});
 	$(':radio[name="layout"]').change(function() {
+		console.log("radio change, checked " + $(this).filter(':checked').val());
 		switch(parseInt($(this).filter(':checked').val())){
 			case 1:
 				$(':checkbox[name="trim"]').prop("disabled", false);
@@ -109,7 +110,7 @@ jQuery("body").hasClass("index") &&
 					$(this).prop("checked", $(this).data("checked"));
 				});
 				break;
-			default:
+			case 2:
 				$(':checkbox[name="trim"]').prop("disabled", true);
 				$(':checkbox[name="trim"]').prop("checked", false);
 				break;
