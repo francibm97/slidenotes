@@ -243,6 +243,8 @@ jQuery("body").hasClass("index") &&
 
 	function unfreezeFormFile() {
 		$('.form-file input, .form-file button').prop("disabled", false);
+		// Gestisci collegamento layout id e checkbox trim
+		$(':radio[name="layout"]').change();
 	}
 
 	function showProgressBar(formElement, status, progress) {
