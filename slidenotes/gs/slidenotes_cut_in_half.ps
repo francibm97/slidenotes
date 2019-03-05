@@ -25,17 +25,17 @@
 	/OriginalCropBox genboxes_save_box_to_pagedict % stack: pagedict
 
 	/OriginalCropBox genboxes_get_box_from_pagedict % stack: pagedict llx lly urx ury
-	4 -1 roll 30 add 4 1 roll % llx = llx + 30
-	3 -1 roll 30 add 3 1 roll % lly = lly + 30
-	exch 30 sub exch % urx = urx - 30
-	2 div 30 sub % ury = (ury/2)-30
+	4 -1 roll 33 add 4 1 roll % llx = llx + 33
+	3 -1 roll 33 add 3 1 roll % lly = lly + 33
+	exch 33 sub exch % urx = urx - 33
+	2 div 33 sub % ury = (ury/2) - 33
 	/MiddleDownBox genboxes_save_box_to_pagedict % stack: pagedict
 
 	/OriginalCropBox genboxes_get_box_from_pagedict % stack: pagedict llx lly urx ury
-	4 -1 roll 30 add 4 1 roll % llx = llx + 30
-	3 -1 roll 30 add 1 index 2 div add 3 1 roll % lly = lly + 30 + (ury/2)
-	exch 30 sub exch % urx = urx - 30
-	30 sub % ury = ury - 30
+	4 -1 roll 33 add 4 1 roll % llx = llx + 33
+	3 -1 roll 33 add 1 index 2 div add 3 1 roll % lly = lly + 33 + (ury/2)
+	exch 33 sub exch % urx = urx - 33
+	33 sub % ury = ury - 33
 	/MiddleUpBox genboxes_save_box_to_pagedict % stack: pagedict
 } bind executeonly def
 
