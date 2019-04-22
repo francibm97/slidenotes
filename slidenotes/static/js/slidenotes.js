@@ -102,7 +102,7 @@ jQuery("body").hasClass("index") &&
 		$(this).data("checked", this.checked);
 	});
 	$(':radio[name="layout"]').change(function() {
-		console.log("radio change, checked " + $(this).filter(':checked').val());
+		//console.log("radio change, checked " + $(this).filter(':checked').val());
 		switch(parseInt($(this).filter(':checked').val())){
 			case 1:
 				$(':checkbox[name="trim"]').prop("disabled", false);
@@ -201,6 +201,7 @@ jQuery("body").hasClass("index") &&
 			e = e.originalEvent;
 			e.preventDefault();
 			$(".input-file")[0].files = e.dataTransfer.files;
+			$(".input-file").eq(0).change();
 			$(".dragover").removeClass("dragover d-flex").hide();
 		});
 	} catch(e){}
