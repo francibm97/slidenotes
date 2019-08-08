@@ -345,6 +345,10 @@
 	background: #f9fafc;
 }
 
+.slidenotes #more {
+	min-height: 100vh;
+}
+
 /****************
  * PAGE PREVIEW *
  ****************/
@@ -383,24 +387,7 @@
 	height: 69px;
 	left: 15px;
 }
-.slidenotes .slide-single-in-43-small {
-	width: 84px;
-	height: 64px;
-	left: 7px;
-	top: 4px;
-}
-.slidenotes .slide-top-in-a4-small {
-	width: 64px;
-	height: 48px;
-	left: 17px;
-	top: 15px;
-}
-.slidenotes .slide-bottom-in-a4-small {
-	width: 64px;
-	height: 48px;
-	left: 17px;
-	top: 79px;
-}
+
 .slidenotes .slide.first-third {
 	top: 15px;
 }
@@ -413,6 +400,208 @@
 .slidenotes .slide.second-half {
 	top: 141px;
 }
+
+.slidenotes .writings {
+	display: block;
+	background-color: #eee;
+	position: absolute;
+	border-radius: 2px;
+	height: 4px;
+	transition: top 0.3s ease, left 0.3s ease, width 0.3s ease, height 0.3s ease;
+}
+
+.slidenotes .lines {
+	display: block;
+	position: absolute;
+	height: 8px;
+	border: solid;
+	border-width: 1px 0px;
+	border-color: #333;
+	width: 28px;
+	left: 64px;
+}
+
+/* slide-layoutid-slideid-[trim|notrim] */
+.slidenotes .slide-l1-0-notrim {
+	width: 84px;
+	height: 64px;
+	left: 7px;
+	top: 4px;
+}
+
+.slidenotes .slide-l2-0-trim {
+	width: 68px;
+	height: 48px;
+	left: 13px;
+	top: 20px;
+}
+.slidenotes .slide-l2-1-trim {
+	width: 68px;
+	height: 48px;
+	left: 13px;
+	top: 75px;
+}
+.slidenotes .slide-l2-0-notrim {
+	width: 90px;
+	height: 64px;
+	left: 4px;
+	top: 4px;
+}
+.slidenotes .slide-l2-1-notrim {
+	width: 90px;
+	height: 64px;
+	left: 4px;
+	top: 72px;
+}
+
+.slidenotes .slide-l3-0-trim {
+	width: 50px;
+	height: 38px;
+	left: 8px;
+	top: 8px;
+}
+.slidenotes .slide-l3-1-trim {
+	width: 50px;
+	height: 38px;
+	left: 8px;
+	top: 51px;
+}
+.slidenotes .slide-l3-2-trim {
+	width: 50px;
+	height: 38px;
+	left: 8px;
+	top: 94px;
+}
+
+.slidenotes .slide-l4-0-trim {
+	width: 32px;
+	height: 24px;
+	left: 13px;
+	top: 40px;
+}
+.slidenotes .slide-l4-1-trim {
+	width: 32px;
+	height: 24px;
+	left: 50px;
+	top: 40px;
+}
+.slidenotes .slide-l4-2-trim {
+	width: 32px;
+	height: 24px;
+	left: 13px;
+	top: 80px;
+}
+.slidenotes .slide-l4-3-trim {
+	width: 32px;
+	height: 24px;
+	left: 50px;
+	top: 80px;
+}
+.slidenotes .slide-l4-0-notrim {
+	width: 43px;
+	height: 32px;
+	left: 5px;
+	top: 4px;
+}
+.slidenotes .slide-l4-1-notrim {
+	width: 43px;
+	height: 32px;
+	left: 50px;
+	top: 4px;
+}
+.slidenotes .slide-l4-2-notrim {
+	width: 43px;
+	height: 32px;
+	left: 5px;
+	top: 38px;
+}
+.slidenotes .slide-l4-3-notrim {
+	width: 43px;
+	height: 32px;
+	left: 50px;
+	top: 38px;
+}
+
+.slidenotes .slide-l6-0-trim {
+	width: 32px;
+	height: 24px;
+	left: 13px;
+	top: 24px;
+}
+.slidenotes .slide-l6-1-trim {
+	width: 32px;
+	height: 24px;
+	left: 50px;
+	top: 24px;
+}
+.slidenotes .slide-l6-2-trim {
+	width: 32px;
+	height: 24px;
+	left: 13px;
+	top: 58px;
+}
+.slidenotes .slide-l6-3-trim {
+	width: 32px;
+	height: 24px;
+	left: 50px;
+	top: 58px;
+}
+.slidenotes .slide-l6-4-trim {
+	width: 32px;
+	height: 24px;
+	left: 13px;
+	top: 92px;
+}
+.slidenotes .slide-l6-5-trim {
+	width: 32px;
+	height: 24px;
+	left: 50px;
+	top: 92px;
+}
+
+.slidenotes .writings-0 {
+	width: 40px;
+	left: 12px;
+	top: 6px;
+}
+
+.slidenotes .writings-1 {
+	width: 20px;
+	left: 62px;
+	top: 6px;
+}
+
+.slidenotes .writings-2 {
+	width: 50px;
+	left: 12px;
+	top: 130px;
+}
+
+.slidenotes .writings-3 {
+	width: 10px;
+	left: 72px;
+	top: 130px;
+}
+
+.slidenotes .lines-0 {
+	top: 18px;
+}
+.slidenotes .lines-1 {
+	top: 25px;
+}
+.slidenotes .lines-2 {
+	top: 61px;
+}
+.slidenotes .lines-3 {
+	top: 68px;
+}
+.slidenotes .lines-4 {
+	top: 104px;
+}
+.slidenotes .lines-5 {
+	top: 111px;
+}
+
 
 /************
  * DRAGOVER *

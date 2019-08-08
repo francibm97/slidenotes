@@ -138,20 +138,49 @@
 										<h5>Contenuto del file originale</h5>
 										<div class="row">
 											<div class="col-6 col-sm-8">
-												<div class="custom-control custom-radio mb-1">
+												<!--div class="custom-control custom-radio mb-1">
 													<input type="radio" id="layout1" name="layout" value="1" class="custom-control-input" checked>
 													<label class="custom-control-label" for="layout1">Una slide per pagina</label>
 												</div>
 												<div class="custom-control custom-radio mb-1">
 													<input type="radio" id="layout2" name="layout" value="2" class="custom-control-input">
 													<label class="custom-control-label" for="layout2">Due slide per pagina</label>
+												</div-->
+												<div class="form-group">
+													<select name="layout" class="custom-select">
+														<option id="layout1" value="1" selected>Una slide per pagina</option>
+														<option id="layout2" value="2">Due slide per pagina</option>
+														<option id="layout3" value="3">Tre slide per pagina</option>
+														<option id="layout4" value="4">Quattro slide per pagina</option>
+														<option id="layout6" value="6">Sei slide per pagina</option>
+													</select>
+												</div>
+												<div class="form-group">
+													<div class="custom-control custom-checkbox mb-3">
+														<input type="checkbox" id="trimlayout" name="trimlayout" class="custom-control-input" checked>
+														<label class="custom-control-label" for="trimlayout">Le slide non occupano tutta la loro porzione di pagina</label>
+													</div>
 												</div>
 											</div>
 											<div class="col-6 col-sm-4">
 												<div id="input-page-preview" class="page page-43-small">
 													<div class="slide-container">
-														<div class="slide slide-single-in-43-small"></div>
-														<div class="slide slide-bottom-in-a4-small" style="display:none"></div>
+														<div class="slide slide-l1-0-notrim"></div>
+														<div class="slide" style="display:none"></div>
+														<div class="slide" style="display:none"></div>
+														<div class="slide" style="display:none"></div>
+														<div class="slide" style="display:none"></div>
+														<div class="slide" style="display:none"></div>
+														<div class="writings writings-0" style="display:none"></div>
+														<div class="writings writings-1" style="display:none"></div>
+														<div class="writings writings-2" style="display:none"></div>
+														<div class="writings writings-3" style="display:none"></div>
+														<div class="lines lines-0" style="display:none"></div>
+														<div class="lines lines-1" style="display:none"></div>
+														<div class="lines lines-2" style="display:none"></div>
+														<div class="lines lines-3" style="display:none"></div>
+														<div class="lines lines-4" style="display:none"></div>
+														<div class="lines lines-5" style="display:none"></div>
 													</div>
 												</div>
 											</div>

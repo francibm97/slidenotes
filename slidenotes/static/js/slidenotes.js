@@ -76,46 +76,109 @@ jQuery("body").hasClass("index") &&
 		}
 	});
 
-	// Collega radio button con le slide nell'anteprima di input
-	$(':radio[name="layout"]').change(function() {
-		var elems = $("#input-page-preview .slide");
-		var elem = $("#input-page-preview");
-		switch(parseInt($(this).filter(':checked').val())){
-			case 1:
-				elem.removeClass("page-a4-small").addClass("page-43-small");
-				elems.eq(0).removeClass("slide-top-in-a4-small").addClass("slide-single-in-43-small");
-				elems.eq(1).fadeOut(300);
-				break;
-			case 2:
-				elem.removeClass("page-43-small").addClass("page-a4-small");
-				elems.eq(0).removeClass("slide-single-in-43-small").addClass("slide-top-in-a4-small");
-				elems.eq(1).delay(150).fadeIn(300);
-				break;
-		}
-	});
+	// Collega layout e trimlayout con le slide nell'anteprima di input
+	// funzione richiamata negli opportuni .change dichiarati dopo per evitare
+	// corse critiche
+	function updateSlidePreview() {
+		var slides = $("#input-page-preview .slide");
+		var writings = $("#input-page-preview .writings");
+		var lines = $("#input-page-preview .lines");
+		var page = $("#input-page-preview");
 
-	// Collega radio button layout input al checkbox trim
-	$(':checkbox[name="trim"]').each(function(){
-		$(this).data("checked", this.checked);
-	});
-	$(':checkbox[name="trim"]').on("change", function(){
-		$(this).data("checked", this.checked);
-	});
-	$(':radio[name="layout"]').change(function() {
-		//console.log("radio change, checked " + $(this).filter(':checked').val());
-		switch(parseInt($(this).filter(':checked').val())){
-			case 1:
-				$(':checkbox[name="trim"]').prop("disabled", false);
-				$(':checkbox[name="trim"]').each(function(){
-					$(this).prop("checked", $(this).data("checked"));
-				});
-				break;
-			case 2:
-				$(':checkbox[name="trim"]').prop("disabled", true);
-				$(':checkbox[name="trim"]').prop("checked", false);
-				break;
+		var layout = parseInt($('select[name="layout"]').eq(0).val());
+		var pagetype =
+			$(':checkbox[name="trimlayout"]:checked').eq(0).val() ? "a4" : "43";
+		var trimtype = pagetype == "a4" ? "trim" : "notrim";
+
+		var i;
+
+		if(layout == 2 || layout == 6) {
+			pagetype = "a4";
 		}
+
+		if(pagetype == "a4") {
+			page.removeClass("page-43-small").addClass("page-a4-small");
+		}
+		else {
+			page.removeClass("page-a4-small").addClass("page-43-small");
+		}
+
+		if(pagetype == "a4" && trimtype == "trim" && layout != 3) {
+			writings.fadeIn(300);
+		}
+		else {
+			writings.fadeOut(300);
+		}
+
+		if(layout == 3) {
+			lines.fadeIn(300);
+		}
+		else {
+			lines.fadeOut(300);
+		}
+
+		for(i = layout; i < 6; i++) {
+			slides.eq(i).fadeOut(300);
+		}
+
+		for(i = 0; i < layout; i++) {
+			slides.eq(i).removeClass(function(index, className) {
+				return (className.match(/slide-l\S+/g) || []).join(' ');
+			});
+			slides.eq(i).addClass("slide-l" + layout + "-" + i + "-" + trimtype);
+			slides.eq(i).delay(150).fadeIn(300);
+		}
+	}
+	// Collega checkbox trimlayout al checkbox trim
+	function updateTrim() {
+		if($(':checkbox[name="trimlayout"]:checked').eq(0).val()) {
+			$(':checkbox[name="trim"]').prop("disabled", true);
+			$(':checkbox[name="trim"]').prop("checked", false);
+		}
+		else {
+			$(':checkbox[name="trim"]').prop("disabled", false);
+			$(':checkbox[name="trim"]').each(function(){
+				$(this).prop("checked", $(this).data("checked"));
+			});
+		}
+	}
+
+	// Qui faccio il backup del valore dei checkbox nell'attributo data-checked
+	$(':checkbox[name="trim"], :checkbox[name="trimlayout"]').each(function(){
+		$(this).data("checked", this.checked);
 	});
+	$(':checkbox[name="trim"], :checkbox[name="trimlayout"]').on("change", function(){
+		$(this).data("checked", this.checked);
+		updateSlidePreview();
+		updateTrim();
+	});
+	// Qui faccio il collegamento
+	$('select[name="layout"]').change(function() {
+		//console.log("radio change, checked " + $(this).filter(':checked').val());
+		var value = parseInt($(this).val());
+		// Checkbox trimlayout
+		if(value == 1) {
+			$(':checkbox[name="trimlayout"]').prop("disabled", true);
+			$(':checkbox[name="trimlayout"]').prop("checked", false);
+		}
+		else if(value == 3 || value == 6) {
+			$(':checkbox[name="trimlayout"]').prop("disabled", true);
+			$(':checkbox[name="trimlayout"]').prop("checked", true);
+		}
+		else {
+			$(':checkbox[name="trimlayout"]').prop("disabled", false);
+			$(':checkbox[name="trimlayout"]').each(function(){
+				$(this).prop("checked", $(this).data("checked"));
+			});
+		}
+
+		updateSlidePreview();
+		updateTrim();
+
+	});
+	// Esegui la logica di collegamento appena caricata la pagina nel caso le
+	// opzioni di default non facessero rispettare i vincoli
+	$('select[name="layout"]').change();
 
 	/* GESTIONE INPUT FILE */
 
@@ -246,7 +309,10 @@ jQuery("body").hasClass("index") &&
 	function unfreezeFormFile() {
 		$('.form-file input, .form-file button').prop("disabled", false);
 		// Gestisci collegamento layout id e checkbox trim
-		$(':radio[name="layout"]').change();
+		// Visto che disabilito tutti gli elementi durante l'upload e poi
+		// li riabilito tutti quando è terminato, devo ricordarmi di ridisabilitare
+		// quegli elementi che erano stati disabilitati agendo sul layout id.
+		$('select[name="layout"]').change();
 	}
 
 	function showProgressBar(formElement, status, progress) {
