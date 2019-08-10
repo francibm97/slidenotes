@@ -1,0 +1,215 @@
+%!PS
+
+(slidenotes_include.ps) run
+
+% impostarlo con sFile=... sulla riga di comando
+/File where not {
+	(\n   *** Missing source file) =
+	quit
+}{ pop } ifelse
+
+/TrimType where not {
+	(\n   *** Missing TrimType) =
+	quit
+}{ pop } ifelse
+
+% Definizione di come vengono fatti i ritagli.
+% Ogni array deve contenere questi 4 elementi in questo esatto ordine:
+% {procedura che mette il valore di llx sullo stack}
+% {procedura che mette il valore di lly sullo stack}
+% {procedura che mette il valore di urx sullo stack}
+% {procedura che mette il valore di ury sullo stack}
+% Le procedure possono accedere alle variabili globaly llx lly urx ury
+
+/TrimTypes <<
+
+	/2trim [
+		[
+			% Slide in alto
+			{ llx 35 add } % llx = llx + 35
+			{ lly 15 add ury 2 div add } % lly = lly + 15 + (ury/2)
+			{ urx 35 sub } % urx = urx - 35
+			{ ury 60 sub } % ury = ury - 35
+		]
+		[
+			% Slide in basso
+			{ llx 35 add } % llx = llx + 35
+			{ lly 60 add } % lly = lly + 35
+			{ urx 35 sub } % urx = urx - 35
+			{ ury ury 2 div sub 15 sub } % ury = ury - (ury/2) - 15
+		]
+	]
+	
+	/3trim [
+		[
+			% Slide in alto
+			{ llx 30 add }
+			{ lly 0 add ury 2 3 div mul add }
+			{ urx urx 2 div sub }
+			{ ury 60 sub }
+		]
+		[
+			% Slide a meta'
+			{ llx 30 add }
+			{ lly 30 add ury 1 3 div mul add }
+			{ urx urx 2 div sub }
+			{ ury ury 1 3 div mul sub 30 sub }
+		]
+		[
+			% Slide in basso
+			{ llx 30 add }
+			{ lly 60 add }
+			{ urx urx 2 div sub }
+			{ ury ury 2 3 div mul sub 0 sub }
+		]
+	]
+	
+	/4trim [
+		[
+			{ llx 30 add } 
+			{ lly 15 add ury 2 div add }
+			{ urx urx 2 div sub }
+			{ ury 60 sub }
+		]
+		[
+			{ urx 2 div  } 
+			{ lly 15 add ury 2 div add }
+			{ urx 30 sub }
+			{ ury 60 sub }
+		]
+		[
+			{ llx 30 add } 
+			{ lly 60 add }
+			{ urx urx 2 div sub }
+			{ ury 2 div 15 sub }
+		]
+		[
+			{ urx 2 div } 
+			{ lly 60 add }
+			{ urx 30 sub }
+			{ ury 2 div 15 sub }
+		]
+	]
+	
+	/6trim [
+		[
+			% Slide in alto sx
+			{ llx 30 add }
+			{ lly 0 add ury 2 3 div mul add }
+			{ urx urx 2 div sub }
+			{ ury 60 sub }
+		]
+		[
+			% Slide in alto dx
+			{ llx urx 2 div add }
+			{ lly 0 add ury 2 3 div mul add }
+			{ urx 30 sub }
+			{ ury 60 sub }
+		]
+		[
+			% Slide a meta' sx
+			{ llx 30 add }
+			{ lly 30 add ury 1 3 div mul add }
+			{ urx urx 2 div sub }
+			{ ury ury 1 3 div mul sub 30 sub }
+		]
+		[
+			% Slide a meta' dx
+			{ llx urx 2 div add }
+			{ lly 30 add ury 1 3 div mul add }
+			{ urx 30 sub }
+			{ ury ury 1 3 div mul sub 30 sub }
+		]
+		[
+			% Slide in basso sx
+			{ llx 30 add }
+			{ lly 60 add }
+			{ urx urx 2 div sub }
+			{ ury ury 2 3 div mul sub 0 sub }
+		]
+		[
+			% Slide in basso dx
+			{ llx urx 2 div add }
+			{ lly 60 add }
+			{ urx 30 sub }
+			{ ury ury 2 3 div mul sub 0 sub }
+		]
+	]
+	
+	/2notrim [
+		[
+			% Slide in alto
+			{ llx }
+			{ lly ury 2 div add }
+			{ urx }
+			{ ury }
+		]
+		[
+			% Slide in basso
+			{ llx }
+			{ lly }
+			{ urx }
+			{ ury ury 2 div sub }
+		]
+	]
+	
+	/4notrim [
+		[
+			% Slide in alto sx
+			{ llx }
+			{ lly ury 2 div add }
+			{ urx urx 2 div sub }
+			{ ury }
+		]
+		[
+			% Slide in alto dx
+			{ llx urx 2 div add }
+			{ lly ury 2 div add }
+			{ urx }
+			{ ury }
+		]
+		[
+			% Slide in basso sx
+			{ llx }
+			{ lly }
+			{ urx urx 2 div sub }
+			{ ury ury 2 div sub }
+		]
+		[
+			% Slide in basso dx
+			{ llx urx 2 div add }
+			{ lly }
+			{ urx }
+			{ ury ury 2 div sub }
+		]
+	]
+
+>> def
+
+TrimTypes TrimType known not {
+	(\n   *** Unknown TrimType) =
+	quit
+} if
+
+File dup (r) file runpdfbegin pop
+process_trailer_attrs
+
+1 1 pdfpagecount {
+	
+	dup pdfgetpage % stack: pageindex pagedict
+	dup get_crop_box % stack: pageindex pagedict llx lly urx ury
+	/ury exch def /urx exch def /lly exch def /llx exch def % stack: pageindex pagedict 
+
+	1 1 TrimTypes TrimType get length {
+		TrimTypes TrimType get exch 1 sub get aload pop % stack: pageindex pagedict proc_llx proc_lly proc_urx proc_ury
+		4 { 4 -1 roll exec } repeat % stack: pageindex pagedict llx lly urx ury
+		4 array astore % stack: pageindex pagedict box_values_array
+		1 index exch /CropBox exch put % stack: pageindex pagedict
+		dup /Page exch store
+		dup pdfshowpage
+		% stack: pageindex pagedict
+	} for
+	pop % rimuove pagedict inutilizzato dall'ultimo ciclo
+	pdfpagecount div 100 mul cvi == flush
+	
+} for
