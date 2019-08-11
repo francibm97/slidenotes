@@ -10,10 +10,22 @@ class NonZeroExitCode(Exception):
 def default_internal_progress(line, internal_progress_extra, external_progress):
     external_progress.progress(line)
 
+def get_crop_boxes_progress(line, internal_progress_extra, external_progress):
+    if "%%HiResCropBox:" in str(line):
+        bbox = line.decode("utf-8")[:-1].split(" ")
+        internal_progress_extra["tmpbox"] = " [ " + bbox[1] + " " + bbox[2] + " " + bbox[3] + " " + bbox[4] + " ] "
+    if "%%BoundingBox:" in str(line):
+        bbox = line.decode("utf-8")[:-1].split(" ")
+        if abs(int(bbox[3]) - int(bbox[1]) > 0) and abs(int(bbox[4]) - int(bbox[2]) > 0):
+            internal_progress_extra["boxes"] += internal_progress_extra["tmpbox"]
+        else:
+            internal_progress_extra["boxes"] += " [ " + bbox[1] + " " + bbox[2] + " " + bbox[3] + " " + bbox[4] + " ] "
+    external_progress.progress(line)
+
 def get_bounding_boxes_progress(line, internal_progress_extra, external_progress):
     if "%%HiResBoundingBox" in str(line):
         bbox = line.decode("utf-8")[:-1].split(" ")
-        internal_progress_extra["boxes"] += "[" + bbox[1] + " " + bbox[2] + " " + bbox[3] + " " + bbox[4] + "]"
+        internal_progress_extra["boxes"] += " [ " + bbox[1] + " " + bbox[2] + " " + bbox[3] + " " + bbox[4] + " ] "
     external_progress.progress(line)
 
 def run(args, external_progress, internal_progress=default_internal_progress, internal_progress_extra=None):
@@ -38,7 +50,7 @@ def generate_safe_pdf(input_path, output_path, progress):
     ]
     run(args, progress)
 
-def generate_bounding_boxes(input_path, layout_id, output_path, progress):
+def generate_boxes(input_path, original_layout, output_path, progress):
     output_file = open(output_path, "w")
 
     args = [
@@ -47,17 +59,20 @@ def generate_bounding_boxes(input_path, layout_id, output_path, progress):
         "-r300"
     ]
 
-    layouts = {
-        1: ["-c", "<< /EndPage { 0 eq {/Page# where {Page# pdfpagecount div 100 mul cvi == flush}if true}{false}ifelse } >> setpagedevice",
-            "-f" + input_path],
-        2: ["-sFile=" + input_path,
-            "-f", "slidenotes_cut_in_half.ps"]
-    }
-    args += layouts[layout_id]
+    if original_layout["slides"] == 1:
+        args += ["-c", "<< /EndPage { 0 eq {/Page# where {Page# pdfpagecount div 100 mul cvi == flush}if true}{false}ifelse } >> setpagedevice", "-f" + input_path]
+    else:
+        args +=  ["-sFile=" + input_path,
+            "-sTrimType=" + str(original_layout["slides"]) + ("trim" if original_layout["trim"] else "notrim"),
+            "-f", "slidenotes_trim_pages.ps"]
 
-    extra = {"boxes": "/Boxes ["}
-    run(args, progress, get_bounding_boxes_progress, extra)
-    extra["boxes"] += "] def"
+    extra = {"boxes": "/Boxes [ "}
+
+    if original_layout["trim"] or original_layout["whitespacetrim"]:
+        run(args, progress, get_bounding_boxes_progress, extra)
+    else:
+        run(args, progress, get_crop_boxes_progress, extra)
+    extra["boxes"] += " ] def"
 
     output_file.write(extra["boxes"])
     output_file.close()

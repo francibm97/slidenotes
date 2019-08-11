@@ -12,5 +12,5 @@ class TaskUpdateProgress:
         self.task.update_state(state="PROCESSING", meta={"progress": percentage})
 
 @celery.task(bind=True)
-def generate_pdf(self, filename, layout_id, options):
-    return {'filename': basename(SlideConvert(TaskUpdateProgress(self)).convert(join(celery.upload_folder, filename), layout_id, options)), 'progress': 100}
+def generate_pdf(self, filename, original_layout, options):
+    return {'filename': basename(SlideConvert(TaskUpdateProgress(self)).convert(join(celery.upload_folder, filename), original_layout, options)), 'progress': 100}

@@ -17,7 +17,7 @@ class SlideConvert:
 
         options = options.copy()
 
-        options_str = "_layout_{}_".format(original_layout) + "_".join(("{}_{}".format(*i) for i in sorted(options.items())))
+        options_str = "_" + "_".join(("{}_{}".format(*i) for i in sorted(original_layout.items()))) + "_".join(("{}_{}".format(*i) for i in sorted(options.items())))
         safe_output_path = input_path + ".safe.pdf"
         boxes_output_path = input_path + options_str + ".boxes.ps"
         imposed_output_path = input_path + options_str + ".imposed.pdf"
@@ -29,24 +29,13 @@ class SlideConvert:
 
         generate_safe = True if not os.path.isfile(safe_output_path) or not cache else False
         generate_boxes = False
-        if original_layout == 1:
-            try:
-                if options["trim"] == True:
-                    if os.path.isfile(boxes_output_path) and cache:
-                        options["boxes"] = {"nperpage": "1", "boxesfilepath": boxes_output_path}
-                    else:
-                        generate_boxes = True
-                        options["boxes"] = {"nperpage": "1", "boxesfilepath": boxes_output_path + random_str}
-            except KeyError:
-                pass
-        elif original_layout == 2:
+
+        if (original_layout["slides"] == 1 and options["trim"] == True) or original_layout["slides"] > 1:
             if os.path.isfile(boxes_output_path) and cache:
-                options["boxes"] = {"nperpage": "2", "boxesfilepath": boxes_output_path}
+                options["boxes"] = {"nperpage": str(original_layout["slides"]), "boxesfilepath": boxes_output_path}
             else:
                 generate_boxes = True
-                options["boxes"] = {"nperpage": "2", "boxesfilepath": boxes_output_path + random_str}
-        else:
-            raise ValueError("Unknown original_layout")
+                options["boxes"] = {"nperpage": str(original_layout["slides"]), "boxesfilepath": boxes_output_path + random_str}
 
         self.current_stage = 1
         self.total_stages = (1 if generate_safe else 0) + (1 if generate_boxes else 0) + 1
@@ -58,7 +47,7 @@ class SlideConvert:
             self.current_stage = self.current_stage + 1
 
         if generate_boxes:
-            gs.generate_bounding_boxes(safe_output_path + random_str if generate_safe else safe_output_path, original_layout, boxes_output_path + random_str, self)
+            gs.generate_boxes(safe_output_path + random_str if generate_safe else safe_output_path, {"slides": original_layout["slides"], "trim": original_layout["trim"], "whitespacetrim": options["trim"]}, boxes_output_path + random_str, self)
             self.current_stage = self.current_stage + 1
 
         gs.generate_imposed_pdf(safe_output_path + random_str if generate_safe else safe_output_path, imposed_output_path + random_str, options, self)
