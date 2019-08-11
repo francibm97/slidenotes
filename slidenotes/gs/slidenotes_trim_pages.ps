@@ -191,6 +191,20 @@ TrimTypes TrimType known not {
 	quit
 } if
 
+/print_crop_box { % <box_values_array> print_crop_box <box_values_array>
+	aload 5 1 roll % stack: box_values_array llx lly urx ury
+	(%stdout) (w) file <2525> writestring % stampa %%
+	(%stdout) (w) file (HiResCropBox:) writestring
+	% stampa llx lly urx ury
+	0 1 3 {
+		4 exch sub -1 roll
+		(%stdout) (w) file ( ) writestring
+		20 string cvs (%stdout) (w) file exch writestring flush
+	} for
+	(%stdout) (w) file <0a> writestring flush % stampa \n newline
+	% stack: box_values_array
+} bind executeonly def
+
 File dup (r) file runpdfbegin pop
 process_trailer_attrs
 
@@ -204,6 +218,7 @@ process_trailer_attrs
 		TrimTypes TrimType get exch 1 sub get aload pop % stack: pageindex pagedict proc_llx proc_lly proc_urx proc_ury
 		4 { 4 -1 roll exec } repeat % stack: pageindex pagedict llx lly urx ury
 		4 array astore % stack: pageindex pagedict box_values_array
+		print_crop_box % stack: pageindex pagedict box_values_array
 		1 index exch /CropBox exch put % stack: pageindex pagedict
 		dup /Page exch store
 		dup pdfshowpage
