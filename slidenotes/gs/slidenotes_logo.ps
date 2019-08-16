@@ -1,12 +1,53 @@
 %!PS
 
-save
-	(pdfgen_Poppins-SemiBold.ttf) (r) file .loadfontfile
-	0.33 setgray
-	/f1 {/Poppins-SemiBold findfont 41.5 scalefont setfont} def
-	/f2 {/Poppins-SemiBold findfont 30 scalefont setfont} def
-	0 1 moveto f1 (S) show
-	f2 currentpoint 6.5 add moveto (lidenotes.app) show
-	1 setlinecap 4 setlinewidth
-	27.35 1 moveto 0 4 rlineto 165 0 rlineto 0 -4 rlineto closepath fill
-restore
+(Roboto-Regular.ttf) (r) file .loadfontfile
+
+% Il catalog contenga l'optional content group (layer) del logo
+% ATTENZIONE: potrebbe non essere conforme allo standard perche' in teoria
+% OCGs dovrebbe contenere l'elenco di tutti gli ocg presenti nel documento
+% ma pazienza
+mark {Catalog} <<
+	/OCProperties <<
+		/OCGs [{ocglogo}]
+		/D <<
+			/AS [
+				<< /Event /View /Category [/View] /OCGs [{ocglogo}] >>
+				<< /Event /Print /Category [/Print] /OCGs [{ocglogo}] >>
+				<< /Event /Export /Category [/Export] /OCGs [{ocglogo}] >>
+			]
+		>>
+	>>
+>> /PUT pdfmark
+
+mark /_objdef {ocglogo} /type/dict /OBJ pdfmark
+mark {ocglogo} <<
+	/Type /OCG 
+	/Name (OCG del logo)
+	/Usage << 
+		/View << /ViewState /OFF >> 
+		/Print << /PrintState /ON >> 
+		/Export << /ExportState /ON >> 
+	>>  
+>> /PUT pdfmark
+
+/slidenotes_logo { % <margin_left> <margin_right> <scale> slidenotes_logo
+	
+	save
+		mark /_objdef {logo} /BBox [0 0 300 300] /BP pdfmark
+		4 1 roll % stack: save margin_left margin_right scale
+		3 1 roll % stack: save scale margin_left margin_right
+		translate
+		dup scale
+		
+		0.33 setgray
+		/f1size 41.5 def
+		/f1 {/Roboto-Regular findfont f1size scalefont setfont} def
+		0 0 moveto f1 (Slidenotes.app) show
+		
+		mark /EP pdfmark
+		mark {logo} <</OC {ocglogo}>> /PUT pdfmark
+	restore
+	
+	mark {logo} /SP pdfmark
+	
+} bind executeonly def

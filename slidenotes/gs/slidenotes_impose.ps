@@ -2,6 +2,7 @@
 
 (slidenotes_include.ps) run
 (slidenotes_strings.ps) run
+(slidenotes_logo.ps) run
 
 % impostarlo con sFile=... sulla riga di comando
 /File where not {
@@ -34,7 +35,7 @@
 } ifelse
 
 % impostarlo con dConQuadretti sulla riga di comando
-/ConQuadretti where not { /ConQuadretti false def }{ /ConQuadretti true def } ifelse
+%/ConQuadretti where not { /ConQuadretti false def }{ /ConQuadretti true def } ifelse
 
 % impostarlo con dDesiredFreeSpacePercentage sulla riga di comando
 /DesiredFreeSpacePercentage where not { /DesiredFreeSpacePercentage 0.5 def } if
@@ -95,27 +96,6 @@ process_trailer_attrs
 	restore
 } bind executeonly def
 
-/logo {
-	{
-	save
-		MarginLeft 6 mm translate
-		0.4 0.4 scale
-		(slidenotes_logo.ps) run
-		
-		% Cover the logo when the pdf is displayed on screen
-		[	/Rect [0 0 250 32]
-			/Subtype /Square
-			/Border [0 0 16]
-			/Color [1 1 1]
-			% Flag ReadOnly, Locked, LockedContents
-			% see par 12.5.3 Annotations Flags from PDF 1.7 Reference
-			/F 1216
-		/ANN pdfmark
-		
-	restore
-	} pop
-} bind executeonly def
-
 % mettilo a zero così da far scattare il primo if in draw_slide
 % quando si disegna la prima slide in assoluto
 /TranslateY 0 def
@@ -134,10 +114,16 @@ process_trailer_attrs
 		/NeedShowPage false def
 		
 		/TranslateY PageHeight def
-		ConQuadretti { quadrettatura } if
 		
-		logo
-
+		%ConQuadretti { quadrettatura } if
+		
+		% Stampa il logo ogni quattro pagine
+		PageCounter 4 mod 1 eq {
+			MarginLeft 6 mm % margini
+			0.3 % scala
+			slidenotes_logo
+		} if
+		
 		MarginLeft MarginBottom translate
 		ScaleFactor ScaleFactor scale
 	} if
