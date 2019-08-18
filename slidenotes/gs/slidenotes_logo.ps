@@ -10,6 +10,9 @@
 	/OCProperties <<
 		/OCGs [{ocglogo}]
 		/D <<
+			/BaseState /ON
+			/Order [ ] % Non mostrare gli OCG nel menu del lettore
+			/Locked [{ocglogo}] % Visibilita' non modificabile
 			/AS [
 				<< /Event /View /Category [/View] /OCGs [{ocglogo}] >>
 				<< /Event /Print /Category [/Print] /OCGs [{ocglogo}] >>
@@ -31,16 +34,16 @@
 	>>  
 >> /PUT pdfmark
 
-% Definizione del logo (compreso tra BeginPicture e EndPicture)
+% Definizione del logo (compreso tra BeginPicture /BP e EndPicture /EP)
 /slidenotes_logo_init { % slidenotes_logo_init
-	[ /_objdef {logo} /BBox [0 0 300 300] /BP pdfmark
-	
-	0.33 setgray
 	/f1size 41.5 def
 	/f1 {/Roboto-Regular findfont f1size scalefont setfont} def
-	0 0 moveto f1 (Slidenotes.app) show
 	
+	[ /_objdef {logo} /BBox [0 f1size -2 div 300 f1size] /BP pdfmark
+	0.33 setgray
+	0 0 moveto f1 (Slidenotes.app) show
 	[ /EP pdfmark
+	
 	[ {logo} <</OC {ocglogo}>> /PUT pdfmark
 } bind executeonly def
 
