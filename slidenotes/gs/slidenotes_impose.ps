@@ -96,6 +96,8 @@ process_trailer_attrs
 	restore
 } bind executeonly def
 
+slidenotes_logo_init
+
 % mettilo a zero così da far scattare il primo if in draw_slide
 % quando si disegna la prima slide in assoluto
 /TranslateY 0 def
@@ -119,9 +121,9 @@ process_trailer_attrs
 		
 		% Stampa il logo ogni quattro pagine
 		PageCounter 4 mod 1 eq {
-			MarginLeft 6 mm % margini
 			0.3 % scala
-			slidenotes_logo
+			MarginLeft 6 mm % margini
+			slidenotes_logo_show
 		} if
 		
 		MarginLeft MarginBottom translate
@@ -164,8 +166,7 @@ process_trailer_attrs
 		FinalSlideHeight SlideHeight div FinalSlideHeight SlideHeight div scale
 				
 		% sposta la slide all'inizio della sua box
-		SlideLLX neg SlideLLY neg translate
-				
+		SlideLLX neg SlideLLY neg translate	
 		
 		% definiamo il rettangolo visibile sul foglio secondo i valori x y w h
 		% anche se la slide ha contenuto al di fuori di questo rettangolo noi

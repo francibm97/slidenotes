@@ -6,7 +6,7 @@
 % ATTENZIONE: potrebbe non essere conforme allo standard perche' in teoria
 % OCGs dovrebbe contenere l'elenco di tutti gli ocg presenti nel documento
 % ma pazienza
-mark {Catalog} <<
+[ {Catalog} <<
 	/OCProperties <<
 		/OCGs [{ocglogo}]
 		/D <<
@@ -19,8 +19,9 @@ mark {Catalog} <<
 	>>
 >> /PUT pdfmark
 
-mark /_objdef {ocglogo} /type/dict /OBJ pdfmark
-mark {ocglogo} <<
+% Definizione dell'ocg
+[ /_objdef {ocglogo} /type/dict /OBJ pdfmark
+[ {ocglogo} <<
 	/Type /OCG 
 	/Name (OCG del logo)
 	/Usage << 
@@ -30,24 +31,23 @@ mark {ocglogo} <<
 	>>  
 >> /PUT pdfmark
 
-/slidenotes_logo { % <margin_left> <margin_right> <scale> slidenotes_logo
+% Definizione del logo (compreso tra BeginPicture e EndPicture)
+/slidenotes_logo_init { % slidenotes_logo_init
+	[ /_objdef {logo} /BBox [0 0 300 300] /BP pdfmark
 	
-	save
-		mark /_objdef {logo} /BBox [0 0 300 300] /BP pdfmark
-		4 1 roll % stack: save margin_left margin_right scale
-		3 1 roll % stack: save scale margin_left margin_right
+	0.33 setgray
+	/f1size 41.5 def
+	/f1 {/Roboto-Regular findfont f1size scalefont setfont} def
+	0 0 moveto f1 (Slidenotes.app) show
+	
+	[ /EP pdfmark
+	[ {logo} <</OC {ocglogo}>> /PUT pdfmark
+} bind executeonly def
+
+/slidenotes_logo_show { % <scale> <margin_left> <margin_right> slidenotes_logo_show
+	gsave
 		translate
 		dup scale
-		
-		0.33 setgray
-		/f1size 41.5 def
-		/f1 {/Roboto-Regular findfont f1size scalefont setfont} def
-		0 0 moveto f1 (Slidenotes.app) show
-		
-		mark /EP pdfmark
-		mark {logo} <</OC {ocglogo}>> /PUT pdfmark
-	restore
-	
-	mark {logo} /SP pdfmark
-	
+		[ {logo} /SP pdfmark
+	grestore
 } bind executeonly def
