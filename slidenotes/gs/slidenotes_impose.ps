@@ -28,7 +28,7 @@
 	%  [2 2 100 100]
 	% ] def
 	%
-	% Il numero di elementi dell'array deve essere pari a 
+	% Il numero di elementi dell'array deve essere pari a
 	% NBoxesPerPage * numero_di_pagine_del_pdf
 	Boxes run
 	/UsePDFCropBox false def
@@ -36,6 +36,9 @@
 
 % impostarlo con dConQuadretti sulla riga di comando
 %/ConQuadretti where not { /ConQuadretti false def }{ /ConQuadretti true def } ifelse
+
+% impostarlo con dShowLogo sulla riga di comando
+/ShowLogo where not { /ShowLogo false def }{ /ShowLogo true def } ifelse
 
 % impostarlo con dDesiredFreeSpacePercentage sulla riga di comando
 /DesiredFreeSpacePercentage where not { /DesiredFreeSpacePercentage 0.5 def } if
@@ -81,12 +84,12 @@ process_trailer_attrs
 /quadrettatura {
 	save
 	PageHeight 4 mm div cvi { % linee orizzontali
-		0 4 mm translate 
-		0 0 moveto PageWidth 0 rlineto 
+		0 4 mm translate
+		0 0 moveto PageWidth 0 rlineto
 		1 15 div mm setlinewidth 0.67 setgray
 		stroke
 	} repeat
-	restore save 
+	restore save
 	PageWidth 4 mm div cvi { % linee verticali
 		4 mm 0 translate
 		0 0 moveto 0 PageHeight rlineto
@@ -96,7 +99,7 @@ process_trailer_attrs
 	restore
 } bind executeonly def
 
-slidenotes_logo_init
+ShowLogo { slidenotes_logo_init } if
 
 % mettilo a zero così da far scattare il primo if in draw_slide
 % quando si disegna la prima slide in assoluto
@@ -111,21 +114,23 @@ slidenotes_logo_init
 	TranslateY 1 lt {
 		% non creare una nuova pagina se è la prima slide in assoluto
 		NeedShowPage { showpage /PageCounter PageCounter 1 add def } if
-		
+
 		% verrà messo a true appena verrà disegnata una slide
 		/NeedShowPage false def
-		
+
 		/TranslateY PageHeight def
-		
+
 		%ConQuadretti { quadrettatura } if
-		
+
 		% Stampa il logo ogni quattro pagine
-		PageCounter 4 mod 1 eq {
-			0.3 % scala
-			MarginLeft 6 mm % margini
-			slidenotes_logo_show
+		ShowLogo {
+			PageCounter 4 mod 1 eq {
+				0.3 % scala
+				MarginLeft 6 mm % margini
+				slidenotes_logo_show
+			} if
 		} if
-		
+
 		MarginLeft MarginBottom translate
 		ScaleFactor ScaleFactor scale
 	} if
@@ -140,15 +145,15 @@ slidenotes_logo_init
 	% SlideHeight è l'altezza della slide ritagliata
 	/SlideHeight SlideURY SlideLLY sub def
 	/NeedShowPage true def
-	
+
 	dup % stack: pagedict pagedict
 	save exch % stack: pagedict save pagedict
-		% trasla nel settore di pagina corretto 
+		% trasla nel settore di pagina corretto
 		0 TranslateY translate
-				
+
 		/FinalSlideWidth DesiredSlideWidth def
 		/FinalSlideHeight SlideHeight FinalSlideWidth mul SlideWidth div def
-		
+
 		% Controlliamo se l'altezza della slide è oltre l'altezza
 		% del settore di pagina in cui deve stare
 		FinalSlideHeight TranslateYStep gt {
@@ -157,65 +162,65 @@ slidenotes_logo_init
 			/FinalSlideHeight TranslateYStep def
 			/FinalSlideWidth SlideWidth FinalSlideHeight mul SlideHeight div def
 		} if
-		
+
 		% Visto che la slide viene disegnata da dove siamo verso l'alto
 		% trasla in basso di quanto la slide sarà alta
 		0 FinalSlideHeight neg translate
-		
+
 		% Applica lo scalamento
 		FinalSlideHeight SlideHeight div FinalSlideHeight SlideHeight div scale
-				
+
 		% sposta la slide all'inizio della sua box
-		SlideLLX neg SlideLLY neg translate	
-		
+		SlideLLX neg SlideLLY neg translate
+
 		% definiamo il rettangolo visibile sul foglio secondo i valori x y w h
 		% anche se la slide ha contenuto al di fuori di questo rettangolo noi
 		% lo tagliamo via
-		% le operazioni di translate e scale è come se non fossero mai state 
+		% le operazioni di translate e scale è come se non fossero mai state
 		% eseguite, quindi bisogna indicare il rettangolo visibile che conterrà
 		% la slide ricordandosi di tutte le traslazioni per il punto
 		% di inizio del rettangolo (in basso a sinistra) e
 		% bisogna ricalcolare le dimensione w h del rettangolo
 		MarginLeft % x
 		MarginBottom TranslateY ScaleFactor mul add FinalSlideHeight ScaleFactor mul sub % y
-		FinalSlideWidth ScaleFactor mul % width 
+		FinalSlideWidth ScaleFactor mul % width
 		FinalSlideHeight ScaleFactor mul % heigth
 		4 array astore % salva in vettore
 		exch % stack: pagedict save rettangolo_visibile pagedict
-				
+
 		dup /Page exch store
 		pdfshowpage_init
 		draw_page_content % stack: pagedict save
-				
+
 		% disegna il bordo
 		SlideLLX SlideLLY translate
 		/LineBorderWidth LineBorderWidth FinalSlideHeight SlideHeight div div ScaleFactor div def
 		0 LineBorderWidth 2 div sub 0 LineBorderWidth 2 div sub moveto
-		SlideWidth LineBorderWidth add 0 rlineto 
-		0 SlideHeight LineBorderWidth add rlineto 
-		SlideWidth LineBorderWidth add neg 0 rlineto 
+		SlideWidth LineBorderWidth add 0 rlineto
+		0 SlideHeight LineBorderWidth add rlineto
+		SlideWidth LineBorderWidth add neg 0 rlineto
 		closepath
 		LineBorderWidth setlinewidth 0.90 setgray
 		stroke
 	restore
-		
+
 	/TranslateY TranslateY TranslateYStep sub def
-	
+
 } bind executeonly def
 
 1 1 pdfpagecount {
-	
+
 	pdfgetpage
-	
+
 	1 1 NBoxesPerPage {
 		pop
-		
+
 		UsePDFCropBox {
 			dup get_crop_box 4 array astore
 		} {
 			Boxes Counter get
 		} ifelse
-		
+
 		% Controlliamo che la box non abbia altezza o ampiezza zero
 		dup oforce_elems % llx lly urx ury
 		3 -1 roll % llx urx ury lly
@@ -229,15 +234,15 @@ slidenotes_logo_init
 				draw_slide
 			} ifelse
 		} ifelse
-		
+
 		/Counter Counter 1 add def
-		
+
 		Counter pdfpagecount NBoxesPerPage mul div 100 mul cvi == flush
-		
+
 	} for
-	
+
 	pop
-	
+
 } for
 NeedShowPage { showpage } if
 
@@ -262,11 +267,11 @@ Trailer /Info knownoget {
 
 %[	/_objdef {Javascripts} /type /dict /OBJ pdfmark
 %[	{Javascripts} << /JavaScript <<
-%		/Names [ 
+%		/Names [
 %			(Script1) <<
 %				/S /JavaScript
 %				/JS (app.launchURL("http://www.example.com/", true);)
-%			>> 
+%			>>
 %		]
 %>> >>
 %/PUT pdfmark
@@ -274,11 +279,10 @@ Trailer /Info knownoget {
 [	{Catalog} <<
 		% Fa si che l'opzione di default sia di non riscalare la pagina quando
 		% viene aperta la finestra per la stampa
-		/ViewerPreferences << 
-			/PrintScaling /None 
-			/Duplex /DuplexFlipLongEdge 
+		/ViewerPreferences <<
+			/PrintScaling /None
+			/Duplex /DuplexFlipLongEdge
 		>>
 		/Names {Javascripts}
-	>> 
+	>>
 	/PUT pdfmark
-	

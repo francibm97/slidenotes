@@ -58,6 +58,7 @@ def task_upload():
     form_npage = "npage"
     form_layout = "layout"
     form_trimlayout = "trimlayout"
+    form_hidelogo = "hidelogo"
     form_privacy = "privacy"
 
     if request.form.get(form_privacy) == None:
@@ -106,7 +107,7 @@ def task_upload():
 
     try:
         layout = abs(int(request.form[form_layout]))
-        if layout < 1 and layout > 6 or layout == 5:
+        if layout < 1 or layout > 6 or layout == 5:
             raise ValueError
     except KeyError:
         layout = 1
@@ -123,7 +124,9 @@ def task_upload():
     if trimlayout == True:
         trim = False
 
-    task = generate_pdf.delay(filename=filename, original_layout={"slides": layout, "trim": trimlayout}, options={"trim": trim, "npage": npage, "percentage": percentage})
+    hidelogo = (request.form.get(form_hidelogo) != None)
+
+    task = generate_pdf.delay(filename=filename, original_layout={"slides": layout, "trim": trimlayout}, options={"trim": trim, "npage": npage, "percentage": percentage, "showlogo": not hidelogo})
     if client_wants_json():
         return jsonify_success({"task_id": task.id}), 202
     return render_template("job.html", task_id=task.id, status="PENDING", progress=0), 202

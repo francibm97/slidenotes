@@ -88,5 +88,7 @@ def generate_imposed_pdf(input_path, output_path, options, progress):
         args += ["-dNBoxesPerPage=" + str(options["boxes"]["nperpage"]), "-sBoxes=" + options["boxes"]["boxesfilepath"]]
     if "percentage" in options:
         args += ["-dDesiredFreeSpacePercentage=" + str(options["percentage"])]
+    if options.get("showlogo") == True:
+        args += ["-dShowLogo"]
     args += ["slidenotes_impose.ps"]
     run(args, progress)

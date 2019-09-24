@@ -1,49 +1,50 @@
 %!PS
 
-(Roboto-Regular.ttf) (r) file .loadfontfile
-
-% Il catalog contenga l'optional content group (layer) del logo
-% ATTENZIONE: potrebbe non essere conforme allo standard perche' in teoria
-% OCGs dovrebbe contenere l'elenco di tutti gli ocg presenti nel documento
-% ma pazienza
-[ {Catalog} <<
-	/OCProperties <<
-		/OCGs [{ocglogo}]
-		/D <<
-			/BaseState /ON
-			/Order [ ] % Non mostrare gli OCG nel menu del lettore
-			/Locked [{ocglogo}] % Visibilita' non modificabile
-			/AS [
-				<< /Event /View /Category [/View] /OCGs [{ocglogo}] >>
-				<< /Event /Print /Category [/Print] /OCGs [{ocglogo}] >>
-				<< /Event /Export /Category [/Export] /OCGs [{ocglogo}] >>
-			]
-		>>
-	>>
->> /PUT pdfmark
-
-% Definizione dell'ocg
-[ /_objdef {ocglogo} /type/dict /OBJ pdfmark
-[ {ocglogo} <<
-	/Type /OCG 
-	/Name (OCG del logo)
-	/Usage << 
-		/View << /ViewState /OFF >> 
-		/Print << /PrintState /ON >> 
-		/Export << /ExportState /ON >> 
-	>>  
->> /PUT pdfmark
-
-% Definizione del logo (compreso tra BeginPicture /BP e EndPicture /EP)
+% Importo il font, definisco l'OCG che contiene il logo e
+% Definisco il logo (compreso tra BeginPicture /BP e EndPicture /EP)
 /slidenotes_logo_init { % slidenotes_logo_init
+	(Roboto-Regular.ttf) (r) file .loadfontfile
+
+	% Il catalog contenga l'optional content group (layer) del logo
+	% ATTENZIONE: potrebbe non essere conforme allo standard perche' in teoria
+	% OCGs dovrebbe contenere l'elenco di tutti gli ocg presenti nel documento
+	% ma pazienza
+	[ {Catalog} <<
+		/OCProperties <<
+			/OCGs [{ocglogo}]
+			/D <<
+				/BaseState /ON
+				/Order [ ] % Non mostrare gli OCG nel menu del lettore
+				/Locked [{ocglogo}] % Visibilita' non modificabile
+				/AS [
+					<< /Event /View /Category [/View] /OCGs [{ocglogo}] >>
+					<< /Event /Print /Category [/Print] /OCGs [{ocglogo}] >>
+					<< /Event /Export /Category [/Export] /OCGs [{ocglogo}] >>
+				]
+			>>
+		>>
+	>> /PUT pdfmark
+
+	% Definizione dell'ocg
+	[ /_objdef {ocglogo} /type/dict /OBJ pdfmark
+	[ {ocglogo} <<
+		/Type /OCG
+		/Name (OCG del logo)
+		/Usage <<
+			/View << /ViewState /OFF >>
+			/Print << /PrintState /ON >>
+			/Export << /ExportState /ON >>
+		>>
+	>> /PUT pdfmark
+
 	/f1size 41.5 def
 	/f1 {/Roboto-Regular findfont f1size scalefont setfont} def
-	
+
 	[ /_objdef {logo} /BBox [0 f1size -2 div 300 f1size] /BP pdfmark
 	0.33 setgray
 	0 0 moveto f1 (Slidenotes.app) show
 	[ /EP pdfmark
-	
+
 	[ {logo} <</OC {ocglogo}>> /PUT pdfmark
 } bind executeonly def
 
