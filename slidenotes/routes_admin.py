@@ -2,8 +2,9 @@ from flask import Blueprint, current_app, request, render_template, redirect, se
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 from slidenotes import admin_db, bcrypt
-from slidenotes.models_admin import User
-import os
+from slidenotes.models_admin import User, Conversion
+from slidenotes.utils.responses import jsonify_success
+import os, sqlalchemy
 
 admin = Blueprint("admin", __name__)
 
@@ -46,4 +47,16 @@ def logout():
 @admin.route("/")
 @login_required
 def home():
-    return "Ciao :)"
+    conversions = Conversion.query.order_by(Conversion.timestamp_uploaded.desc()).all()
+    for i in range(0, len(conversions)):
+        try:
+            conversions[i].duration = (conversions[i].timestamp_processed - conversions[i].timestamp_uploaded).total_seconds()
+        except Exception:
+            conversions[i].duration = -1
+    return render_template("admin_conversions.html", conversions=conversions)
+
+@admin.route("/conversions_per_dates")
+@login_required
+def conversions_per_dates():
+    conversions = admin_db.session.query(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded), sqlalchemy.func.count(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded))).group_by(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded)).all()
+    return jsonify_success({"dates": [str(el[0]) for el in conversions], "counts": [str(el[1]) for el in conversions]})

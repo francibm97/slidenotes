@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% set page_class_id = "index" %}
+{% set title = "Slidenotes.app - Login" %}
+{% set description = "Effettuare il login" %}
+
+{% block content %}
+<section class="section-invert py-4 min-full-page">
+	<div class="container">
+		<h3 class="section-title text-center mb-5 mt-2 pb-3">Conversioni</h3>
+		<div class="row">
+			<div class="col-md-12 text-justify py-2 ml-auto mr-auto">
+				<div class="row justify-content-md-center px-4">
+					<div class="p-4 mb-3 card">
+						{% if conversions %}
+							{% for conversion in conversions %}
+								<table class="table">
+								<tbody>
+								<tr>
+									<th scope="row">File</th>
+									<td>{{ conversion.file_id }}</td>
+								</tr>
+								<tr>
+									<th scope="row">Data</th>
+									<td>{{ conversion.timestamp_uploaded }}</td>
+								</tr>
+								<tr>
+									{% if conversion.duration > 0 %}
+									<th scope="row">Durata conversione</th>
+									<td>{{ conversion.duration }} secondi</td>
+									{% else %}
+									<th scope="row">Conversione fallita</th>
+									{% endif %}
+								</tr>
+								<tr>
+									<th scope="row">Indirizzo IP</th>
+									<td>{{ conversion.client_ip }}</td>
+								</tr>
+								<tr>
+									<th scope="row">User-Agent</th>
+									<td>{{ conversion.client_ua }}</td>
+								</tr>
+								</tbody>
+								</table>
+							{% endfor %}
+						{% else %}
+							<div> Non ci sono conversioni</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock content %}
