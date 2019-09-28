@@ -11,7 +11,7 @@ admin = Blueprint("admin", __name__)
 @admin.route("/login", methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
-        return redirect(url_for("admin.home"))
+        return redirect(url_for("admin.index"))
     if not User.query.filter_by(username="root").first():
         return redirect(url_for("admin.register"))
 
@@ -20,7 +20,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, request.form.get("password")):
             login_user(user)
             next_page = request.args.get("next")
-            return redirect(next_page) if next_page else redirect(url_for("admin.home"))
+            return redirect(next_page) if next_page else redirect(url_for("admin.index"))
         else:
             flash("Password errata", "danger")
     return render_template("admin_login.html")
@@ -46,7 +46,12 @@ def logout():
 
 @admin.route("/")
 @login_required
-def home():
+def index():
+    return render_template("admin_index.html")
+
+@admin.route("/conversions")
+@login_required
+def conversions():
     conversions = Conversion.query.order_by(Conversion.timestamp_uploaded.desc()).all()
     for i in range(0, len(conversions)):
         try:
@@ -58,5 +63,5 @@ def home():
 @admin.route("/conversions_per_dates")
 @login_required
 def conversions_per_dates():
-    conversions = admin_db.session.query(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded), sqlalchemy.func.count(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded))).group_by(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded)).all()
+    conversions = admin_db.session.query(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded), sqlalchemy.func.count(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded))).group_by(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded)).limit(60).all()
     return jsonify_success({"dates": [str(el[0]) for el in conversions], "counts": [str(el[1]) for el in conversions]})

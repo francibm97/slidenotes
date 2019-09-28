@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% set page_class_id = "index" %}
+{% set title = "Slidenotes.app - Admin" %}
+{% set description = "Admin" %}
+
+{% block scripts %}
+	{% autoescape false %}
+	<script>
+		{{ include_file("js/plotly-latest.min.js") }}
+	</script>
+	<script>
+		(function () {
+			window.onload = function (event) {
+				Plotly.d3.json("{{ url_for('admin.conversions_per_dates') }}", function(error, data){
+					if(error){
+						console.error(error);
+						return;
+					}
+					let traces = [
+						{
+							x: data["data"]["dates"],
+							y: data["data"]["counts"],
+							line: {shape: 'linear'},
+						}
+					];
+					let layout = {
+						title: "Conversioni negli ultimi 60 giorni",
+						yaxis: {
+							rangemode: 'tozero',
+							autorange: true,
+						},
+					};
+					let config = {
+						showLink: false,
+						displaylogo: false,
+						displayModeBar: false,
+						scrollZoom: false,
+					};
+					Plotly.plot(document.getElementById("grafico"), traces, layout, config);
+				});
+			}
+		})();
+	</script>
+	{% endautoescape %}
+{% endblock %}
+
+{% block content %}
+<section class="section-invert py-4 min-full-page">
+	<div class="container">
+		<h3 class="section-title text-center mb-5 mt-2 pb-3">Slidenotes</h3>
+		<div class="row">
+			<div class="col-md-12 text-justify py-2 ml-auto mr-auto">
+				<div class="row justify-content-md-center px-4">
+					<a href="{{ url_for('admin.conversions') }}" class="btn btn-primary btn-pill">
+						Lista di tutte le Conversioni
+					</a>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 text-justify py-2 ml-auto mr-auto">
+				<div class="row justify-content-md-center px-4">
+					<div class="p-4 mb-3 card">
+						<div id="grafico"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock content %}
