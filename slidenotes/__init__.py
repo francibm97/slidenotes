@@ -25,7 +25,7 @@ admin_login_manager = LoginManager(app)
 admin_login_manager.login_view = 'admin.login'
 admin_login_manager.login_message = ''
 if not os.path.isfile("../admin.sqlite"):
-    from slidenotes.models_admin import User
+    from slidenotes.models_admin import User, Conversion
     admin_db.create_all()
     admin_db.session.commit()
 

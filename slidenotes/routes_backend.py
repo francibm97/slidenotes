@@ -1,4 +1,5 @@
 from flask import Blueprint, current_app, request, render_template, send_file, abort
+from flask_limiter.util import get_remote_address, get_ipaddr
 from werkzeug.utils import secure_filename
 import os
 
@@ -6,7 +7,8 @@ from slidenotes.utils.clientinfo import client_wants_json
 from slidenotes.utils.responses import jsonify_success
 from slidenotes.utils.file import is_pdf, sha256
 from slidenotes.tasks import generate_pdf
-from slidenotes import limiter
+from slidenotes.models_admin import Conversion
+from slidenotes import limiter, admin_db
 
 backend = Blueprint("backend", __name__)
 
@@ -127,6 +129,11 @@ def task_upload():
     hidelogo = (request.form.get(form_hidelogo) != None)
 
     task = generate_pdf.delay(filename=filename, original_layout={"slides": layout, "trim": trimlayout}, options={"trim": trim, "npage": npage, "percentage": percentage, "showlogo": not hidelogo})
+
+    conversion = Conversion(task_id=task.id, file_id=filename, client_ua=request.headers.get('User-Agent'), client_ip=get_ipaddr())
+    admin_db.session.add(conversion)
+    admin_db.session.commit()
+
     if client_wants_json():
         return jsonify_success({"task_id": task.id}), 202
     return render_template("job.html", task_id=task.id, status="PENDING", progress=0), 202
