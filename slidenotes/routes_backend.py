@@ -7,7 +7,7 @@ from slidenotes.utils.clientinfo import client_wants_json
 from slidenotes.utils.responses import jsonify_success
 from slidenotes.utils.file import is_pdf, sha256
 from slidenotes.tasks import generate_pdf
-from slidenotes.models_admin import Conversion
+from slidenotes.models_admin import Conversion, ConversionOptions
 from slidenotes import limiter, admin_db
 
 backend = Blueprint("backend", __name__)
@@ -128,9 +128,13 @@ def task_upload():
 
     hidelogo = (request.form.get(form_hidelogo) != None)
 
-    task = generate_pdf.delay(filename=filename, original_layout={"slides": layout, "trim": trimlayout}, options={"trim": trim, "npage": npage, "percentage": percentage, "showlogo": not hidelogo})
+    original_layout = {"slides": layout, "trim": trimlayout}
+    options = {"trim": trim, "npage": npage, "percentage": percentage, "showlogo": not hidelogo}
 
-    conversion = Conversion(task_id=task.id, file_id=filename, client_ua=request.headers.get('User-Agent'), client_ip=get_ipaddr())
+    task = generate_pdf.delay(filename=filename, original_layout=original_layout, options=options)
+
+    options_id = ConversionOptions.get_option_id(original_layout=original_layout, options=options)
+    conversion = Conversion(task_id=task.id, file_id=filename, client_ua=request.headers.get('User-Agent'), client_ip=get_ipaddr(), options_id=options_id)
     admin_db.session.add(conversion)
     admin_db.session.commit()
 

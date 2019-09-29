@@ -48,10 +48,15 @@
 {% block content %}
 <section class="section-invert py-4 min-full-page">
 	<div class="container">
-		<h3 class="section-title text-center mb-5 mt-2 pb-3">Slidenotes</h3>
+		<h3 class="section-title text-center mb-5 mt-2 pb-3">Slidenotes - Statistiche globali</h3>
 		<div class="row">
 			<div class="col-md-12 text-justify py-2 ml-auto mr-auto">
-				<div class="row justify-content-md-center px-4">
+				<div class="row justify-content-md-center px-4 pb-4">
+					<a href="{{ url_for('admin.conversions_per_file') }}" class="btn btn-primary btn-pill">
+						File più convertiti negli ultimi 60 giorni
+					</a>
+				</div>
+				<div class="row justify-content-md-center px-4 pb-4">
 					<a href="{{ url_for('admin.conversions') }}" class="btn btn-primary btn-pill">
 						Lista di tutte le Conversioni
 					</a>

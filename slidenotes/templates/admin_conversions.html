@@ -25,11 +25,12 @@
 									<td>{{ conversion.timestamp_uploaded }}</td>
 								</tr>
 								<tr>
-									{% if conversion.duration > 0 %}
+									{% if conversion.duration != None %}
 									<th scope="row">Durata conversione</th>
 									<td>{{ conversion.duration }} secondi</td>
 									{% else %}
 									<th scope="row">Conversione fallita</th>
+									<td></td>
 									{% endif %}
 								</tr>
 								<tr>
