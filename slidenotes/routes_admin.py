@@ -71,12 +71,12 @@ def file_preview(client_filename):
 @login_required
 def file_download(client_filename):
     file_id = secure_filename(client_filename)
-    filename = os.path.join(current_app.config["UPLOAD_FOLDER"], task.info.get("filename", ""))
+    filename = os.path.join(current_app.config["UPLOAD_FOLDER"], file_id)
     if not os.path.isfile(filename):
         abort(404, "Il file richiesto non è presente")
     response = send_file(filename)
     response.headers["Content-Type"] = "application/pdf"
-    response.headers["Content-Disposition"] = "attachment; filename={filename}.pdf".format(filename=task_id)
+    response.headers["Content-Disposition"] = "attachment; filename={filename}.pdf".format(filename=file_id)
     return response
 
 @admin.route("/conversions_per_file")
