@@ -1,4 +1,5 @@
 from flask import render_template
+from slidenotes.utils import decorators
 import os
 
 from slidenotes import app, cache
@@ -12,7 +13,7 @@ def include_file(filename):
 app.jinja_env.globals.update(include_file=include_file)
 
 @app.route("/", methods=["GET"])
-@cache.cached(timeout=3600)
+@decorators.onlyproduction(cache.cached(timeout=3600))
 def index():
     return render_template("index.html")
 
