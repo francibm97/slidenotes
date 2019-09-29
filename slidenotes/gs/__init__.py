@@ -35,7 +35,8 @@ def run(args, external_progress, internal_progress=default_internal_progress, in
         line = p.stderr.readline()
         if not line:
             break
-        internal_progress(line, internal_progress_extra, external_progress)
+        if external_progress is not None:
+            internal_progress(line, internal_progress_extra, external_progress)
         output += line.decode("utf-8")
     if p.wait() != 0:
         raise NonZeroExitCode(output)
@@ -92,3 +93,11 @@ def generate_imposed_pdf(input_path, output_path, options, progress):
         args += ["-dShowLogo"]
     args += ["slidenotes_impose.ps"]
     run(args, progress)
+
+def generate_jpg_preview(input_path, output_path):
+    args = [
+        "-dNOPAUSE", "-dBATCH",
+        "-sDEVICE=jpeg", "-dFirstPage=1", "-dLastPage=1", "-r72x72",
+        "-o", output_path, input_path
+    ]
+    run(args, None)

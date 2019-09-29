@@ -1,10 +1,11 @@
-from flask import Blueprint, current_app, request, render_template, redirect, send_file, url_for, flash
+from flask import Blueprint, current_app, request, render_template, redirect, send_file, url_for, flash, abort
 from flask_login import login_user, current_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 from slidenotes import admin_db, bcrypt
 from slidenotes.models_admin import User, Conversion
 from slidenotes.utils.responses import jsonify_success
-import os, sqlalchemy
+from slidenotes.gs.slide_preview import generate_slide_preview
+import datetime, os, sqlalchemy, string
 
 admin = Blueprint("admin", __name__)
 
@@ -53,11 +54,53 @@ def index():
 @login_required
 def conversions():
     conversions = Conversion.query.order_by(Conversion.timestamp_uploaded.desc()).all()
-    for i in range(0, len(conversions)):
-        try:
-            conversions[i].duration = (conversions[i].timestamp_processed - conversions[i].timestamp_uploaded).total_seconds()
-        except Exception:
-            conversions[i].duration = -1
+    return render_template("admin_conversions.html", conversions=conversions)
+
+@admin.route("/file_preview/<client_filename>")
+@login_required
+def file_preview(client_filename):
+    file_id = secure_filename(client_filename)
+    if not os.path.isfile(os.path.join(current_app.config["UPLOAD_FOLDER"], file_id)):
+        abort(404, "Il file richiesto non è presente")
+    file_preview_path = generate_slide_preview(os.path.join(current_app.config["UPLOAD_FOLDER"], file_id))
+    response = send_file(file_preview_path)
+    response.headers["Content-Type"] = "image/jpeg"
+    return response
+
+@admin.route("/file_download/<client_filename>")
+@login_required
+def file_download(client_filename):
+    file_id = secure_filename(client_filename)
+    filename = os.path.join(current_app.config["UPLOAD_FOLDER"], task.info.get("filename", ""))
+    if not os.path.isfile(filename):
+        abort(404, "Il file richiesto non è presente")
+    response = send_file(filename)
+    response.headers["Content-Type"] = "application/pdf"
+    response.headers["Content-Disposition"] = "attachment; filename={filename}.pdf".format(filename=task_id)
+    return response
+
+@admin.route("/conversions_per_file")
+@login_required
+def conversions_per_file():
+    conversions = \
+        admin_db.session.query( \
+            Conversion.file_id, \
+            sqlalchemy.func.count(Conversion.file_id), \
+            sqlalchemy.func.max(Conversion.duration), \
+            sqlalchemy.func.avg(Conversion.duration), \
+            sqlalchemy.func.min(Conversion.duration) \
+        ) \
+        .filter(Conversion.timestamp_uploaded >= (datetime.datetime.utcnow() - datetime.timedelta(days=60))) \
+        .group_by(Conversion.file_id) \
+        .order_by( sqlalchemy.func.count(Conversion.file_id).desc()).all()
+    conversions = [{"file_id": str(el[0]), "count": str(el[1]), "max_duration": float(el[2]), "avg_duration": float(el[3]), "min_duration": float(el[4])} for el in conversions]
+
+    return render_template("admin_conversions_per_file.html", conversions=conversions)
+
+@admin.route("/conversions_per_file/<client_filename>")
+@login_required
+def conversions_per_file_details(client_filename):
+    conversions = Conversion.query.filter_by(file_id=client_filename).order_by(Conversion.timestamp_uploaded.desc()).all()
     return render_template("admin_conversions.html", conversions=conversions)
 
 @admin.route("/conversions_per_dates")

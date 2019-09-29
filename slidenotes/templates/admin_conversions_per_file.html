@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% set page_class_id = "index" %}
+{% set title = "Slidenotes.app - Conversioni" %}
+{% set description = "Conversioni" %}
+
+{% block content %}
+<section class="section-invert py-4 min-full-page">
+	<div class="container">
+		<h3 class="section-title text-center mb-5 mt-2 pb-3">Conversioni negli ultimi 60 giorni</h3>
+		<div class="row">
+			<div class="col-md-12 text-justify py-2 ml-auto mr-auto">
+				<div class="row justify-content-md-center px-4">
+					<div class="p-4 mb-3 card">
+						{% if conversions %}
+						<table class="table">
+							<thead>
+								<tr>
+									<th scope="col"></th>
+									<th scope="col">Conversioni</th>
+									<th scope="col">Durate</th>
+									<th scope="col">File ID</th>
+								</tr>
+							</thead>
+							<tbody>
+							{% for conversion in conversions %}
+								<tr>
+									<td><img src="{{ url_for('admin.file_preview', client_filename=conversion.file_id) }}" height="80px"></td>
+									<td>{{ conversion.count }}</td>
+									<td>
+										Massima: {{ conversion.max_duration | round(2) }} s<br>
+										Media: {{ conversion.avg_duration | round(2) }} s<br>
+										Minima: {{ conversion.min_duration | round(2) }} s
+									</td>
+									<td>
+										<a href="{{ url_for('admin.file_download', client_filename=conversion.file_id) }}">{{ conversion.file_id }}</a>
+										<br>
+										<a href="{{ url_for('admin.conversions_per_file_details', client_filename=conversion.file_id) }}">Maggiori informazioni</a>
+									</td>
+								</tr>
+							{% endfor %}
+							</tbody>
+						</table>
+						{% else %}
+							<div> Non ci sono conversioni</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock content %}

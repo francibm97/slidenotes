@@ -17,6 +17,6 @@ class TaskUpdateProgress:
 def generate_pdf(self, filename, original_layout, options):
     filename = basename(SlideConvert(TaskUpdateProgress(self)).convert(join(celery.upload_folder, filename), original_layout, options))
     conversion = Conversion.query.get(self.request.id)
-    conversion.timestamp_processed = datetime.utcnow()
+    conversion.duration = (datetime.utcnow() - conversion.timestamp_uploaded).total_seconds()
     admin_db.session.commit()
     return {'filename': filename, 'progress': 100}
