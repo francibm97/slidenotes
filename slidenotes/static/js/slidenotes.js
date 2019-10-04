@@ -182,13 +182,20 @@ jQuery("body").hasClass("index") &&
 
 	/* GESTIONE INPUT FILE */
 
-	// Gestisci etichetta input file
-	function updateFileLabel(input) {
-		if(input.val() != ''){
+	function getFileBase(input) {
+		if(input.val() != '') {
 			var filename = input.val();
 			var separator = filename[1] == ":" ? "\\" : "/";
 			var base = new String(filename).substring(filename.lastIndexOf(separator) + 1);
-			input.siblings(".custom-file-label").html(base);
+			return base;
+		}
+		return null;
+	}
+
+	// Gestisci etichetta input file
+	function updateFileLabel(input) {
+		if(input.val() != ''){
+			input.siblings(".custom-file-label").html(getFileBase(input));
 		}
 		else {
 			input.siblings(".custom-file-label").html(input.siblings(".custom-file-label").data("default-text"));
@@ -197,9 +204,19 @@ jQuery("body").hasClass("index") &&
 	$(":file.custom-file-input").each(function(){
 		$(this).siblings(".custom-file-label").eq(0).data("default-text", $(this).siblings(".custom-file-label").html());
 	});
+
+	// Gestisce campo hidden con il nome del file
+	function updateHiddenFilenameValue(input) {
+		input.siblings('[name="filename"]').val(getFileBase(input));
+	}
+
+
 	$(":file.custom-file-input").on("change",function(){
 		updateFileLabel($(this));
+		updateHiddenFilenameValue($(this));
 	});
+
+
 
 	// Gestisci controllo file col server
 	function readChunked(a,b,c){function d(){var i=a.slice(g,g+1048576);h.readAsBinaryString(i)}var e=a.size,g=0,h=new FileReader;h.onload=function(){return h.error?void c(h.error||{}):(g+=h.result.length,b(h.result,g,e),g>=e?void c(null):void d())},h.onerror=function(i){c(i||{})},d()}
@@ -219,6 +236,7 @@ jQuery("body").hasClass("index") &&
 			newInputFile.insertAfter($(this));
 			$(this).remove();
 			updateFileLabel(newInputFile);
+			updateHiddenFilenameValue(newInputFile);
 		});
 
 		if($(this).val() != '' && window.Promise){
