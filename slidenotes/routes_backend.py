@@ -31,7 +31,7 @@ def task_download(task_id):
             abort(410, "Il file richiesto non è più presente")
         response = send_file(filename)
         response.headers["Content-Type"] = "application/pdf"
-        response.headers["Content-Disposition"] = "attachment; filename={filename}.pdf".format(filename=task_id)
+        response.headers["Content-Disposition"] = "attachment; filename={filename}.slidenotes.pdf".format(filename=os.path.splitext(task.info.get("client_filename", task_id))[0])
         return response
     else:
         abort(400, "Il file richiesto non è ancora stato generato o non esiste")
@@ -54,6 +54,7 @@ def task_status(task_id):
 def task_upload():
     form_file = "file"
     form_sha256 = "sha256"
+    form_filename = "filename"
     form_trim = "trim"
     form_percentage = "percentage"
     form_npage = "npage"
@@ -79,10 +80,12 @@ def task_upload():
         if file and is_pdf(file):
             filename = sha256(file)
             file.save(os.path.join(current_app.config["UPLOAD_FOLDER"], filename))
+            client_filename = os.path.basename(secure_filename(request.files[form_file].filename))
         else :
             abort(400, "PDF è il solo formato accettato")
     else :
         filename = request.form[form_sha256]
+        client_filename = os.path.basename(secure_filename(request.form[form_filename]))
 
     trim = (request.form.get(form_trim) != None)
 
@@ -130,7 +133,7 @@ def task_upload():
     original_layout = {"slides": layout, "trim": trimlayout}
     options = {"trim": trim, "npage": npage, "percentage": percentage, "showlogo": not hidelogo}
 
-    task = generate_pdf.delay(filename=filename, original_layout=original_layout, options=options, client_ua=request.headers.get('User-Agent'), client_ip=get_ipaddr())
+    task = generate_pdf.delay(filename=filename, client_filename=client_filename, original_layout=original_layout, options=options, client_ua=request.headers.get('User-Agent'), client_ip=get_ipaddr())
 
     if client_wants_json():
         return jsonify_success({"task_id": task.id}), 202
