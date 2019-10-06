@@ -12,14 +12,15 @@
 	<script>
 		(function () {
 			window.onload = function (event) {
-				Plotly.d3.json("{{ url_for('admin.conversions_per_dates') }}", function(error, data){
+				let plot = document.getElementById("plot");
+				Plotly.d3.json(plot.dataset.datasourceurl, function(error, data){
 					if(error){
 						console.error(error);
 						return;
 					}
 					let traces = [
 						{
-							name: 'last_weeks',
+							name: plot.dataset.last_weeks,
 							x: data["data"]["dates_last_weeks"],
 							y: data["data"]["counts_last_weeks"],
 							text: data["data"]["counts_last_weeks"],
@@ -30,7 +31,7 @@
 							yaxis: 'y',
 						},
 						{
-							name: 'prev_weeks',
+							name: plot.dataset.prev_weeks,
 							x: data["data"]["dates_prev_weeks"],
 							y: data["data"]["counts_prev_weeks"],
 							text: data["data"]["counts_prev_weeks"],
@@ -42,34 +43,42 @@
 						},
 					];
 					let layout = {
-						showlegend: false,
-						title: "Conversioni negli ultimi 60 giorni",
+						showlegend: true,
+						title: plot.dataset.title,
 						hovermode: "closest",
 						yaxis: {
 							rangemode: 'tozero',
 							autorange: true,
 						},
 						xaxis: {
+							title: plot.dataset.xtitle,
 							type: 'date',
 							domain: [0, 1],
 							tickformat: '%b %d',
+							fixedrange: true,
 						},
 						xaxis2: {
 							type: 'date',
 							domain: [0, 1],
 							tickformat: '%b %d',
+							fixedrange: true,
 							overlaying: 'x',
 							//showgrid: false,
 							side: 'top',
+						},
+						yaxis: {
+							title: plot.dataset.ytitle,
+							fixedrange: true,
 						}
 					};
 					let config = {
 						showLink: false,
 						displaylogo: false,
 						displayModeBar: false,
-						scrollZoom: false,
 					};
-					Plotly.plot(document.getElementById("grafico"), traces, layout, config);
+					Plotly.plot(plot, traces, layout, config);
+					plot.on('plotly_legenddoubleclick', function(d, i) {return false});
+					plot.on('plotly_legendclick', function(d, i) {return false});
 				});
 			}
 		})();
@@ -99,7 +108,12 @@
 			<div class="col-md-12 text-justify py-2 ml-auto mr-auto">
 				<div class="row justify-content-md-center px-4">
 					<div class="p-4 mb-3 card">
-						<div id="grafico"></div>
+						<div id="plot"
+							data-datasourceurl="{{ url_for('admin.conversions_per_dates') }}"
+							data-title="Conversioni negli ultimi due mesi"
+							data-xtitle="Tempo" data-ytitle="# conversioni"
+							data-last_weeks="Ultimi 28 giorni"
+							data-prev_weeks="Periodo precedente"></div>
 					</div>
 				</div>
 			</div>
