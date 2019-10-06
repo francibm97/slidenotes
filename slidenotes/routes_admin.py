@@ -106,5 +106,6 @@ def conversions_per_file_details(client_filename):
 @admin.route("/conversions_per_dates")
 @login_required
 def conversions_per_dates():
-    conversions = admin_db.session.query(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded), sqlalchemy.func.count(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded))).group_by(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded)).limit(60).all()
-    return jsonify_success({"dates": [str(el[0]) for el in conversions], "counts": [str(el[1]) for el in conversions]})
+    conversions_dates = dict(admin_db.session.query(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded), sqlalchemy.func.count(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded))).filter(Conversion.timestamp_uploaded >= (datetime.datetime.today() - datetime.timedelta(days=60))).group_by(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded)).all())
+    dates = list(reversed([(datetime.datetime.today() - datetime.timedelta(days=days)).strftime("%Y-%m-%d") for days in range(0,60)]))
+    return jsonify_success({"dates": dates, "counts": [conversions_dates.get(date, 0) for date in dates]})
