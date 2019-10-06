@@ -19,17 +19,49 @@
 					}
 					let traces = [
 						{
-							x: data["data"]["dates"],
-							y: data["data"]["counts"],
-							line: {shape: 'linear'},
-						}
+							name: 'last_weeks',
+							x: data["data"]["dates_last_weeks"],
+							y: data["data"]["counts_last_weeks"],
+							text: data["data"]["counts_last_weeks"],
+							hoverinfo: 'x+text',
+							line: {shape: 'hvh'},
+							mode: 'lines+markers',
+							xaxis: 'x1',
+							yaxis: 'y',
+						},
+						{
+							name: 'prev_weeks',
+							x: data["data"]["dates_prev_weeks"],
+							y: data["data"]["counts_prev_weeks"],
+							text: data["data"]["counts_prev_weeks"],
+							hoverinfo: 'x+text',
+							line: {shape: 'hvh'},
+							mode: 'lines+markers',
+							xaxis: 'x2',
+							yaxis: 'y',
+						},
 					];
 					let layout = {
+						showlegend: false,
 						title: "Conversioni negli ultimi 60 giorni",
+						hovermode: "closest",
 						yaxis: {
 							rangemode: 'tozero',
 							autorange: true,
 						},
+						xaxis: {
+							type: 'date',
+							domain: [0, 1],
+							tickformat: '%b %d',
+						},
+						xaxis2: {
+							type: 'date',
+							domain: [0, 1],
+							tickformat: '%b %d',
+							overlaying: 'x',
+							//showgrid: false,
+							side: 'top',
+						}
 					};
 					let config = {
 						showLink: false,

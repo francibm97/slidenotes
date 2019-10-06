@@ -106,6 +106,13 @@ def conversions_per_file_details(client_filename):
 @admin.route("/conversions_per_dates")
 @login_required
 def conversions_per_dates():
-    conversions_dates = dict(admin_db.session.query(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded), sqlalchemy.func.count(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded))).filter(Conversion.timestamp_uploaded >= (datetime.datetime.today() - datetime.timedelta(days=60))).group_by(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded)).all())
-    dates = list(reversed([(datetime.datetime.today() - datetime.timedelta(days=days)).strftime("%Y-%m-%d") for days in range(0,60)]))
-    return jsonify_success({"dates": dates, "counts": [conversions_dates.get(date, 0) for date in dates]})
+    conversions_dates = dict(admin_db.session.query(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded), sqlalchemy.func.count(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded))).filter(Conversion.timestamp_uploaded >= (datetime.datetime.today() - datetime.timedelta(days=71))).group_by(sqlalchemy.func.strftime("%Y-%m-%d", Conversion.timestamp_uploaded)).all())
+    dates = list(reversed([datetime.datetime.today() - datetime.timedelta(days=days) for days in range(0,71)]))
+    dates_last_weeks = [date.strftime("%Y-%m-%d") for date in dates if int(date.strftime("%V")) >= int(datetime.datetime.today().strftime("%V")) - 4]
+    dates_prev_weeks = [date.strftime("%Y-%m-%d") for date in dates if int(date.strftime("%V")) < int(datetime.datetime.today().strftime("%V")) - 4][len(dates_last_weeks) - len(dates_last_weeks) + 1:]
+    return jsonify_success({
+        "dates_last_weeks": dates_last_weeks,
+        "counts_last_weeks": [conversions_dates.get(date, 0) for date in dates_last_weeks],
+        "dates_prev_weeks": dates_prev_weeks,
+        "counts_prev_weeks": [conversions_dates.get(date, 0) for date in dates_prev_weeks],
+    })
