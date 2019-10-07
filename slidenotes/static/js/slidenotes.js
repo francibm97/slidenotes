@@ -387,6 +387,7 @@ jQuery("body").hasClass("index") &&
 				if ($(formElement).find(".input-file").val() != ""){
 					$(formElement).find(".input-file").trigger("change");
 				}
+				$('[name="hidelogo"]').prop("checked", false); // Eheh
 			}, 1000);
 			setTimeout(function(){
 				showModal("job-completed", $(formElement).data("file-download-url") + dict.taskId);
