@@ -29,12 +29,12 @@ jQuery("body").hasClass("index") &&
 		start: 50,
 		step: 1,
 		range: {
-			min: 45,
+			min: 35,
 			max: 55
 		},
 		pips: {
 			mode: 'values',
-			values: [45, 50, 55],
+			values: [35, 40, 45, 50, 55],
 			density: 10
 		}
 	});

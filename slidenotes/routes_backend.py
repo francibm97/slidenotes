@@ -100,7 +100,7 @@ def task_upload():
 
     try:
         percentage = int(request.form[form_percentage])
-        if percentage < 45 or percentage > 55:
+        if percentage < 35 or percentage > 55:
             raise ValueError
     except KeyError:
         percentage = 50
